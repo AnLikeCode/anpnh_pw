@@ -1,0 +1,45 @@
+---
+import { url } from '../../lib/site';
+
+interface Props {
+  profile: {
+    name: string;
+    email?: string;
+    links: { label: string; url: string }[];
+    footerLine?: string;
+  };
+}
+const { profile } = Astro.props;
+const yearNow = new Date().getFullYear();
+---
+
+<footer class="wrap mt-32 md:mt-48">
+  <div class="grid gap-10 border-t border-rule py-10 md:grid-cols-12 md:gap-6 md:py-14">
+    <div class="md:col-span-6">
+      <p class="font-serif text-[1.375rem] leading-snug text-ink italic md:text-2xl">
+        {profile.footerLine}
+      </p>
+      {
+        profile.email && (
+          <a href={`mailto:${profile.email}`} class="link mt-4 inline-block text-[0.9375rem]">
+            {profile.email}
+          </a>
+        )
+      }
+    </div>
+
+    <ul class="flex flex-wrap gap-x-6 gap-y-2 text-[0.875rem] md:col-span-6 md:justify-end md:self-end">
+      {
+        profile.links.map((l) => (
+          <li>
+            <a href={url(l.url)} class="quiet text-ink-2 hover:text-ink">
+              {l.label}
+            </a>
+          </li>
+        ))
+      }
+      <li><a href={url('/rss.xml')} class="quiet text-ink-2 hover:text-ink">RSS</a></li>
+    </ul>
+  </div>
+  <p class="meta pb-10">&copy; {yearNow} {profile.name}</p>
+</footer>

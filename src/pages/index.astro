@@ -1,0 +1,185 @@
+---
+import Base from '../layouts/Base.astro';
+import QuantumSphere from '../components/visual/QuantumSphere.astro';
+import ResearchRow from '../components/research/ResearchRow.astro';
+import JourneyItem from '../components/journey/JourneyItem.astro';
+import ArticleRow from '../components/insights/ArticleRow.astro';
+import MemoryCard from '../components/memories/MemoryCard.astro';
+import PersonCard from '../components/people/PersonCard.astro';
+import GroupCard from '../components/people/GroupCard.astro';
+import { getProfile, getPeople, getGroups, published, pickFeatured, url } from '../lib/site';
+import { siteConfig } from '../site.config';
+import { render } from 'astro:content';
+
+const profile = await getProfile();
+const p = profile.data;
+
+const allResearch = await published('research');
+const featuredResearch = pickFeatured(allResearch, siteConfig.home.research);
+
+const allJourney = await published('journey');
+const recentJourney = allJourney.slice(0, siteConfig.home.journey);
+
+const allInsights = await published('insights');
+const featuredInsights = pickFeatured(allInsights, siteConfig.home.insights);
+
+const allMemories = await published('memories');
+const previewMemories = pickFeatured(allMemories, siteConfig.home.memories);
+
+const people = await getPeople();
+const groups = await getGroups();
+---
+
+<Base>
+  <!-- Hero: Asymmetric split with Text on left and QuantumSphere on right -->
+  <section class="wrap pt-12 pb-16 md:pt-20 md:pb-24 border-b border-rule">
+    <div class="grid grid-cols-1 items-center gap-10 md:grid-cols-12 md:gap-12">
+      <div class="md:col-span-7 lg:col-span-7">
+        <p class="meta text-accent mb-3 tracking-wide">{p.identity}</p>
+        <h1 class="text-3xl font-medium tracking-tight text-ink sm:text-4xl md:text-5xl md:leading-[1.1]">
+          {p.name}
+        </h1>
+        <p class="mt-4 text-base md:text-lg text-ink-2 leading-relaxed max-w-[48ch]">
+          {p.statement}
+        </p>
+
+        <div class="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-[0.875rem]">
+          {p.links.map((link) => (
+            <a href={url(link.url)} class="link text-ink-2 hover:text-ink">
+              {link.label}
+            </a>
+          ))}
+          <a href={url('/about')} class="link text-ink-2 hover:text-ink">
+            About me
+          </a>
+        </div>
+      </div>
+
+      <div class="md:col-span-5 lg:col-span-5 flex justify-center md:justify-end">
+        <div class="w-full max-w-[280px] sm:max-w-[320px] md:max-w-[360px]">
+          <QuantumSphere />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About summary -->
+  <section class="wrap py-16 md:py-24 border-b border-rule">
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-12 md:gap-12">
+      <div class="md:col-span-4">
+        <h2 class="h-section">Background</h2>
+      </div>
+      <div class="md:col-span-8">
+        <p class="text-base md:text-lg text-ink-2 leading-relaxed max-w-[65ch]">
+          {p.summary}
+        </p>
+        <div class="mt-6">
+          <a href={url('/about')} class="meta link text-ink-3 hover:text-accent inline-flex items-center gap-1">
+            <span>Read full biography and academic background</span>
+            <span class="arrow">&rarr;</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Selected research -->
+  <section class="wrap py-16 md:py-24 border-b border-rule">
+    <div class="flex flex-col gap-2 md:flex-row md:items-baseline md:justify-between mb-8">
+      <h2 class="h-section">Selected research</h2>
+      <a href={url('/research')} class="meta link text-ink-3 hover:text-accent inline-flex items-center gap-1">
+        <span>View all research ({allResearch.length})</span>
+        <span class="arrow">&rarr;</span>
+      </a>
+    </div>
+
+    <div>
+      {featuredResearch.map((entry) => (
+        <ResearchRow entry={entry} />
+      ))}
+    </div>
+  </section>
+
+  <!-- Recent journey & news -->
+  <section class="wrap py-16 md:py-24 border-b border-rule">
+    <div class="flex flex-col gap-2 md:flex-row md:items-baseline md:justify-between mb-8">
+      <h2 class="h-section">Recent milestones</h2>
+      <a href={url('/journey')} class="meta link text-ink-3 hover:text-accent inline-flex items-center gap-1">
+        <span>Full journey archive</span>
+        <span class="arrow">&rarr;</span>
+      </a>
+    </div>
+
+    <div>
+      {recentJourney.map((entry) => (
+        <JourneyItem entry={entry} />
+      ))}
+    </div>
+  </section>
+
+  <!-- Supervisors & Research Group -->
+  {(people.length > 0 || groups.length > 0) && (
+    <section class="wrap py-16 md:py-24 border-b border-rule">
+      <div class="mb-10">
+        <h2 class="h-section">Supervisors and laboratory</h2>
+      </div>
+
+      <div class="grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-16">
+        {people.map(async (person) => {
+          const { Content } = await render(person);
+          return (
+            <PersonCard person={person}>
+              <Content />
+            </PersonCard>
+          );
+        })}
+
+        {groups.map(async (group) => {
+          const { Content } = await render(group);
+          return (
+            <GroupCard group={group}>
+              <Content />
+            </GroupCard>
+          );
+        })}
+      </div>
+    </section>
+  )}
+
+  <!-- Selected insights -->
+  <section class="wrap py-16 md:py-24 border-b border-rule">
+    <div class="flex flex-col gap-2 md:flex-row md:items-baseline md:justify-between mb-8">
+      <h2 class="h-section">Selected writing</h2>
+      <a href={url('/insights')} class="meta link text-ink-3 hover:text-accent inline-flex items-center gap-1">
+        <span>All articles ({allInsights.length})</span>
+        <span class="arrow">&rarr;</span>
+      </a>
+    </div>
+
+    <div>
+      {featuredInsights.map((entry) => (
+        <ArticleRow entry={entry} />
+      ))}
+    </div>
+  </section>
+
+  <!-- Memories preview -->
+  <section class="wrap py-16 md:py-24">
+    <div class="flex flex-col gap-2 md:flex-row md:items-baseline md:justify-between mb-10">
+      <div>
+        <h2 class="h-section">Memories archive</h2>
+        <p class="mt-1 text-[0.875rem] text-ink-3 font-serif italic">Moments, places, and quiet evenings.</p>
+      </div>
+      <a href={url('/memories')} class="meta link text-ink-3 hover:text-accent inline-flex items-center gap-1">
+        <span>Enter archive</span>
+        <span class="arrow">&rarr;</span>
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
+      {previewMemories.map((entry) => (
+        <MemoryCard entry={entry} />
+      ))}
+    </div>
+  </section>
+</Base>

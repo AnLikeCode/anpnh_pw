@@ -1,0 +1,127 @@
+---
+import Base from '../../layouts/Base.astro';
+import PersonCard from '../../components/people/PersonCard.astro';
+import GroupCard from '../../components/people/GroupCard.astro';
+import { getProfile, getPeople, getGroups, getPage, url } from '../../lib/site';
+import { render } from 'astro:content';
+
+const page = await getPage('about');
+const profile = await getProfile();
+const p = profile.data;
+const { Content } = await render(profile);
+
+const people = await getPeople();
+const groups = await getGroups();
+---
+
+<Base title={page?.data.title || 'About'} description={page?.data.description || p.summary}>
+  <div class="wrap py-12 md:py-20">
+    <header class="mb-14 border-b border-rule pb-10">
+      <div class="meta text-accent mb-2">{p.identity}</div>
+      <h1 class="text-3xl font-medium tracking-tight text-ink md:text-4xl">
+        {p.name}
+      </h1>
+      <p class="mt-2 text-base md:text-lg text-ink-2">
+        {p.role}{p.affiliation ? `, ${p.affiliation}` : ''}
+      </p>
+
+      {p.links.length > 0 && (
+        <div class="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-[0.875rem]">
+          {p.links.map((link) => (
+            <a href={url(link.url)} class="link text-ink-2 hover:text-ink">
+              {link.label}
+            </a>
+          ))}
+          {p.email && (
+            <a href={`mailto:${p.email}`} class="link text-ink-2 hover:text-ink">
+              {p.email}
+            </a>
+          )}
+        </div>
+      )}
+    </header>
+
+    <div class="grid grid-cols-1 gap-16 md:grid-cols-12 md:gap-16">
+      <!-- Biography & Details -->
+      <div class="md:col-span-7">
+        <section>
+          <h2 class="text-xs uppercase tracking-wider font-mono text-ink-3 mb-6">Biography</h2>
+          <div class="prose max-w-none">
+            <Content />
+          </div>
+        </section>
+
+        {p.currentFocus && (
+          <section class="mt-14 border-t border-rule pt-8">
+            <h2 class="text-xs uppercase tracking-wider font-mono text-ink-3 mb-3">Current focus</h2>
+            <p class="text-base text-ink-2 leading-relaxed">
+              {p.currentFocus}
+            </p>
+          </section>
+        )}
+      </div>
+
+      <!-- Sidebar: Education & Interests -->
+      <div class="md:col-span-5 space-y-12">
+        {p.interests.length > 0 && (
+          <section class="border-t border-rule pt-6 md:border-t-0 md:pt-0">
+            <h2 class="text-xs uppercase tracking-wider font-mono text-ink-3 mb-4">Research interests</h2>
+            <div class="flex flex-wrap gap-2">
+              {p.interests.map((interest) => (
+                <span class="rounded-[2px] bg-paper-2 border border-rule px-2.5 py-1 text-xs text-ink-2 font-mono">
+                  {interest}
+                </span>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {p.education.length > 0 && (
+          <section class="border-t border-rule pt-6">
+            <h2 class="text-xs uppercase tracking-wider font-mono text-ink-3 mb-4">Education</h2>
+            <div class="space-y-4">
+              {p.education.map((edu) => (
+                <div>
+                  <h3 class="text-sm font-medium text-ink">{edu.degree}</h3>
+                  <p class="text-xs text-ink-3 mt-0.5">{edu.institution}</p>
+                  {edu.years && <p class="meta text-ink-3 text-[0.6875rem] mt-0.5">{edu.years}</p>}
+                  {edu.note && <p class="text-xs text-ink-2 mt-1 italic font-serif">{edu.note}</p>}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+    </div>
+
+    <!-- Supervisors and Laboratory -->
+    {(people.length > 0 || groups.length > 0) && (
+      <section class="mt-24 border-t border-rule pt-16">
+        <div class="mb-10">
+          <h2 class="text-2xl font-medium tracking-tight text-ink">Supervisors and research group</h2>
+          <p class="mt-1 text-sm text-ink-3 font-serif italic">Academic mentors and institutional affiliations.</p>
+        </div>
+
+        <div class="grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-16">
+          {people.map(async (person) => {
+            const { Content: PersonContent } = await render(person);
+            return (
+              <PersonCard person={person}>
+                <PersonContent />
+              </PersonCard>
+            );
+          })}
+
+          {groups.map(async (group) => {
+            const { Content: GroupContent } = await render(group);
+            return (
+              <GroupCard group={group}>
+                <GroupContent />
+              </GroupCard>
+            );
+          })}
+        </div>
+      </section>
+    )}
+  </div>
+</Base>

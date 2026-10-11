@@ -1,0 +1,54 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { url } from '../../lib/site';
+
+interface Props {
+  group: CollectionEntry<'group'>;
+}
+
+const { group } = Astro.props;
+const d = group.data;
+---
+
+<div class="border-t border-rule pt-6">
+  <div class="flex items-start gap-4">
+    {d.logo ? (
+      <img
+        src={url(d.logo.src)}
+        alt={d.logo.alt}
+        class="h-12 w-12 object-contain border border-rule p-1 shrink-0"
+      />
+    ) : null}
+
+    <div class="flex-1 min-w-0">
+      <div class="flex flex-wrap items-baseline justify-between gap-2">
+        <h3 class="text-[1.125rem] font-medium text-ink">
+          {d.name}
+        </h3>
+        {d.institution && <span class="meta text-ink-3">{d.institution}</span>}
+      </div>
+    </div>
+  </div>
+
+  <div class="prose text-[0.9375rem] text-ink-2 mt-4 leading-relaxed">
+    <slot />
+  </div>
+
+  {d.directions.length > 0 && (
+    <div class="meta mt-4 flex flex-wrap gap-x-3 gap-y-1 text-ink-3">
+      <span class="text-ink-2 font-medium">Research directions:</span>
+      {d.directions.map((dir) => (
+        <span>{dir}</span>
+      ))}
+    </div>
+  )}
+
+  {d.website && (
+    <div class="mt-4">
+      <a href={url(d.website)} class="meta link text-ink-3 hover:text-accent inline-flex items-center gap-1">
+        <span>Group website</span>
+        <span class="arrow-ne">&nearr;</span>
+      </a>
+    </div>
+  )}
+</div>

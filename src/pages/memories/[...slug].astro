@@ -1,0 +1,97 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+import { formatDate, hasBody, url } from '../../lib/site';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('memories', ({ data }) => (import.meta.env.PROD ? !data.draft : true));
+  return entries.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+---
+
+<Base title={d.title} description={d.caption} image={d.cover.src}>
+  <article class="wrap py-12 md:py-20">
+    <div class="mb-6">
+      <a href={url('/memories')} class="meta link text-ink-3 hover:text-accent inline-flex items-center gap-1">
+        <span>&larr;</span>
+        <span>Back to memories archive</span>
+      </a>
+    </div>
+
+    <header class="border-b border-rule pb-10 max-w-[70ch]">
+      <div class="meta flex flex-wrap items-center gap-x-3 gap-y-1 text-ink-3 mb-3">
+        <time datetime={d.date.toISOString()}>{formatDate(d.date)}</time>
+        {d.location && (
+          <>
+            <span class="text-rule-strong">/</span>
+            <span class="text-ink-2 font-medium">{d.location}</span>
+          </>
+        )}
+      </div>
+
+      <h1 class="text-3xl sm:text-4xl font-medium tracking-tight text-ink leading-tight">
+        {d.title}
+      </h1>
+
+      <p class="mt-4 font-serif italic text-lg md:text-xl text-ink-2 leading-relaxed">
+        {d.caption}
+      </p>
+    </header>
+
+    <figure class="my-10 max-w-[72ch]">
+      <div class="overflow-hidden rounded-[2px] border border-rule bg-paper-2">
+        <img
+          src={url(d.cover.src)}
+          alt={d.cover.alt}
+          loading="eager"
+          decoding="async"
+          class="w-full object-cover"
+        />
+      </div>
+      {d.cover.caption && (
+        <figcaption class="meta text-ink-3 mt-2 font-serif italic text-xs">
+          {d.cover.caption}
+        </figcaption>
+      )}
+    </figure>
+
+    {hasBody(entry.body) && (
+      <div class="prose mt-12 max-w-[65ch]">
+        <Content />
+      </div>
+    )}
+
+    {d.photos.length > 0 && (
+      <section class="mt-16 border-t border-rule pt-12 max-w-[72ch]">
+        <h2 class="text-xs uppercase tracking-wider font-mono text-ink-3 mb-8">Additional photographs</h2>
+        <div class="space-y-12">
+          {d.photos.map((photo) => (
+            <figure class="space-y-2">
+              <div class="overflow-hidden rounded-[2px] border border-rule bg-paper-2">
+                <img
+                  src={url(photo.src)}
+                  alt={photo.alt}
+                  loading="lazy"
+                  decoding="async"
+                  class="w-full object-cover"
+                />
+              </div>
+              {photo.caption && (
+                <figcaption class="meta text-ink-3 font-serif italic text-xs">
+                  {photo.caption}
+                </figcaption>
+              )}
+            </figure>
+          ))}
+        </div>
+      </section>
+    )}
+  </article>
+</Base>

@@ -1,0 +1,86 @@
+---
+import Base from '../../layouts/Base.astro';
+import ResearchRow from '../../components/research/ResearchRow.astro';
+import { getPage, published } from '../../lib/site';
+
+const page = await getPage('research');
+const entries = await published('research');
+
+const publications = entries.filter((e) => ['journal', 'conference', 'thesis'].includes(e.data.kind) || e.data.status === 'published');
+const preprints = entries.filter((e) => e.data.kind === 'preprint' || e.data.status === 'preprint' || e.data.status === 'under-review');
+const ongoing = entries.filter((e) => e.data.kind === 'ongoing' || e.data.status === 'ongoing');
+const software = entries.filter((e) => e.data.kind === 'software' || e.data.kind === 'independent' || e.data.kind === 'collaborative');
+---
+
+<Base title={page?.data.title || 'Research'} description={page?.data.description}>
+  <div class="wrap py-12 md:py-20">
+    <header class="mb-14 border-b border-rule pb-10">
+      <h1 class="text-3xl font-medium tracking-tight text-ink md:text-4xl">
+        {page?.data.title || 'Research'}
+      </h1>
+      {page?.data.intro && (
+        <p class="mt-4 text-base md:text-lg text-ink-2 max-w-[65ch] leading-relaxed">
+          {page.data.intro}
+        </p>
+      )}
+    </header>
+
+    <div class="space-y-16">
+      {preprints.length > 0 && (
+        <section>
+          <div class="flex items-baseline justify-between border-b border-ink pb-2 mb-2">
+            <h2 class="text-xs uppercase tracking-wider font-mono text-ink-3">Preprints</h2>
+            <span class="meta text-ink-3">({preprints.length})</span>
+          </div>
+          <div>
+            {preprints.map((entry) => (
+              <ResearchRow entry={entry} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {publications.length > 0 && (
+        <section>
+          <div class="flex items-baseline justify-between border-b border-ink pb-2 mb-2">
+            <h2 class="text-xs uppercase tracking-wider font-mono text-ink-3">Peer-reviewed publications</h2>
+            <span class="meta text-ink-3">({publications.length})</span>
+          </div>
+          <div>
+            {publications.map((entry) => (
+              <ResearchRow entry={entry} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {ongoing.length > 0 && (
+        <section>
+          <div class="flex items-baseline justify-between border-b border-ink pb-2 mb-2">
+            <h2 class="text-xs uppercase tracking-wider font-mono text-ink-3">Ongoing research</h2>
+            <span class="meta text-ink-3">({ongoing.length})</span>
+          </div>
+          <div>
+            {ongoing.map((entry) => (
+              <ResearchRow entry={entry} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {software.length > 0 && (
+        <section>
+          <div class="flex items-baseline justify-between border-b border-ink pb-2 mb-2">
+            <h2 class="text-xs uppercase tracking-wider font-mono text-ink-3">Software and tools</h2>
+            <span class="meta text-ink-3">({software.length})</span>
+          </div>
+          <div>
+            {software.map((entry) => (
+              <ResearchRow entry={entry} />
+            ))}
+          </div>
+        </section>
+      )}
+    </div>
+  </div>
+</Base>

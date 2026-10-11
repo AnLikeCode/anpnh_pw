@@ -1,0 +1,89 @@
+---
+import { siteConfig } from '../../site.config';
+import { stripBase, url } from '../../lib/site';
+
+interface Props {
+  name: string;
+}
+const { name } = Astro.props;
+const current = stripBase(Astro.url.pathname);
+
+const isActive = (href: string) => (href === '/' ? current === '/' : current === href || current.startsWith(`${href}/`));
+---
+
+<header class="wrap">
+  <div class="flex h-16 items-center justify-between gap-6 md:h-[72px]">
+    <a href={url('/')} class="quiet text-[0.9375rem] font-medium tracking-[-0.01em] whitespace-nowrap">{name}</a>
+
+    <nav aria-label="Main" class="hidden md:block">
+      <ul class="flex items-center gap-7 text-[0.875rem]">
+        {
+          siteConfig.nav.map((item) => (
+            <li>
+              <a
+                href={url(item.href)}
+                aria-current={isActive(item.href) ? 'page' : undefined}
+                class:list={[
+                  'nav-link relative py-1 transition-colors duration-300',
+                  isActive(item.href) ? 'text-ink' : 'text-ink-3 hover:text-ink',
+                ]}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+
+  <!-- Mobile: one scrollable row, no menu toggle needed. -->
+  <nav aria-label="Main" class="-mx-5 border-t border-rule md:hidden">
+    <ul class="no-scrollbar flex gap-6 overflow-x-auto px-5 py-3 text-[0.875rem]">
+      {
+        siteConfig.nav
+          .filter((item) => item.href !== '/')
+          .map((item) => (
+            <li class="shrink-0">
+              <a
+                href={url(item.href)}
+                aria-current={isActive(item.href) ? 'page' : undefined}
+                class:list={['nav-link relative py-1', isActive(item.href) ? 'text-ink' : 'text-ink-3']}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+      }
+    </ul>
+  </nav>
+</header>
+
+<style>
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -2px;
+    height: 1px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .nav-link:hover::after {
+    transform: scaleX(1);
+    background: var(--rule-strong);
+  }
+  .nav-link[aria-current='page']::after {
+    transform: scaleX(1);
+    background: var(--accent);
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+</style>

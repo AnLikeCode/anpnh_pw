@@ -1,0 +1,91 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+import { formatDate, kindLabel, statusLabel, url } from '../../lib/site';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('research', ({ data }) => (import.meta.env.PROD ? !data.draft : true));
+  return entries.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+---
+
+<Base title={d.title} description={d.abstract || d.summary}>
+  <article class="wrap py-12 md:py-20">
+    <div class="mb-6">
+      <a href={url('/research')} class="meta link text-ink-3 hover:text-accent inline-flex items-center gap-1">
+        <span>&larr;</span>
+        <span>Back to research archive</span>
+      </a>
+    </div>
+
+    <header class="border-b border-rule pb-10">
+      <div class="meta flex flex-wrap items-center gap-x-3 gap-y-1 text-ink-3 mb-3">
+        <span>{formatDate(d.date)}</span>
+        <span class="text-rule-strong">/</span>
+        <span>{kindLabel[d.kind] || d.kind}</span>
+        <span class="text-rule-strong">/</span>
+        <span class="capitalize">{statusLabel[d.status] || d.status}</span>
+        {d.venue && (
+          <>
+            <span class="text-rule-strong">/</span>
+            <span class="text-ink-2">{d.venue}</span>
+          </>
+        )}
+      </div>
+
+      <h1 class="text-2xl sm:text-3xl md:text-4xl font-medium tracking-tight text-ink leading-tight max-w-[48ch]">
+        {d.title}
+      </h1>
+
+      {d.authors.length > 0 && (
+        <p class="mt-4 text-[0.9375rem] text-ink-2">
+          <span class="text-ink-3">Authors:</span> {d.authors.join(', ')}
+        </p>
+      )}
+
+      {d.role && (
+        <p class="mt-1 text-[0.875rem] text-ink-3">
+          <span class="font-medium text-ink-2">Role:</span> {d.role}
+        </p>
+      )}
+
+      {d.links.length > 0 && (
+        <div class="mt-6 flex flex-wrap gap-4 text-[0.875rem]">
+          {d.links.map((link) => (
+            <a href={url(link.url)} class="link text-ink-2 hover:text-accent inline-flex items-center gap-1">
+              <span>{link.label}</span>
+              <span class="arrow-ne">&nearr;</span>
+            </a>
+          ))}
+        </div>
+      )}
+    </header>
+
+    {d.abstract && (
+      <section class="my-10 p-6 md:p-8 bg-paper-2 border border-rule rounded-[2px] max-w-[70ch]">
+        <h2 class="text-xs uppercase tracking-wider font-mono text-ink-3 mb-2">Abstract</h2>
+        <p class="font-serif text-base md:text-lg text-ink-2 leading-relaxed">
+          {d.abstract}
+        </p>
+      </section>
+    )}
+
+    <div class="prose mt-12 max-w-[68ch]">
+      <Content />
+    </div>
+
+    {d.bibtex && (
+      <section class="mt-16 border-t border-rule pt-10 max-w-[68ch]">
+        <h2 class="text-xs uppercase tracking-wider font-mono text-ink-3 mb-3">Citation (BibTeX)</h2>
+        <pre class="overflow-x-auto text-xs p-4 bg-paper-2 border border-rule rounded-[2px] text-ink-2 font-mono leading-relaxed"><code>{d.bibtex.trim()}</code></pre>
+      </section>
+    )}
+  </article>
+</Base>

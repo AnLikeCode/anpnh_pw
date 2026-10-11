@@ -1,0 +1,42 @@
+---
+import Base from '../../layouts/Base.astro';
+import JourneyItem from '../../components/journey/JourneyItem.astro';
+import { getPage, groupByYear, published } from '../../lib/site';
+
+const page = await getPage('journey');
+const entries = await published('journey');
+const years = groupByYear(entries);
+---
+
+<Base title={page?.data.title || 'Journey'} description={page?.data.description}>
+  <div class="wrap py-12 md:py-20">
+    <header class="mb-14 border-b border-rule pb-10">
+      <h1 class="text-3xl font-medium tracking-tight text-ink md:text-4xl">
+        {page?.data.title || 'Journey'}
+      </h1>
+      {page?.data.intro && (
+        <p class="mt-4 text-base md:text-lg text-ink-2 max-w-[65ch] leading-relaxed">
+          {page.data.intro}
+        </p>
+      )}
+    </header>
+
+    <div class="space-y-16">
+      {years.map(([yearNum, items]) => (
+        <section class="grid grid-cols-1 gap-6 md:grid-cols-12 md:gap-12">
+          <div class="md:col-span-2">
+            <h2 class="sticky top-8 font-mono text-2xl font-light text-ink tracking-tight">
+              {yearNum}
+            </h2>
+          </div>
+
+          <div class="md:col-span-10 divide-y divide-rule border-t border-rule md:border-t-0">
+            {items.map((entry) => (
+              <JourneyItem entry={entry} />
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  </div>
+</Base>

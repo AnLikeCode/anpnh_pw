@@ -1,0 +1,69 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatDayMonth, hasBody, url } from '../../lib/site';
+
+interface Props {
+  entry: CollectionEntry<'journey'>;
+}
+
+const { entry } = Astro.props;
+const d = entry.data;
+const hasDetail = hasBody(entry.body) || d.gallery.length > 0;
+const href = url(`/journey/${entry.id}`);
+---
+
+<article class="relative grid grid-cols-1 gap-3 py-6 md:grid-cols-12 md:gap-6 border-b border-rule">
+  <div class="meta text-ink-3 md:col-span-3">
+    <time datetime={d.date.toISOString()}>{formatDayMonth(d.date)}</time>
+    <span class="mx-1 text-rule-strong">/</span>
+    <span class="text-ink-2 font-medium">{d.category}</span>
+    {d.sample && <span class="sample-tag ml-2">example</span>}
+  </div>
+
+  <div class="md:col-span-9">
+    <h3 class="text-[1.0625rem] font-medium tracking-[-0.01em]">
+      {hasDetail ? (
+        <a href={href} class="quiet text-ink hover:text-accent">
+          {d.title}
+        </a>
+      ) : (
+        <span class="text-ink">{d.title}</span>
+      )}
+    </h3>
+
+    <p class="mt-1.5 text-[0.9375rem] text-ink-2 max-w-[65ch]">
+      {d.description}
+    </p>
+
+    {d.cover && (
+      <div class="mt-4 max-w-md overflow-hidden rounded-[2px] border border-rule">
+        <img
+          src={url(d.cover.src)}
+          alt={d.cover.alt}
+          loading="lazy"
+          decoding="async"
+          class="w-full object-cover transition-transform duration-500 ease-out hover:scale-[1.01]"
+        />
+      </div>
+    )}
+
+    {d.links.length > 0 && (
+      <div class="meta mt-3 flex flex-wrap gap-x-4 gap-y-1">
+        {d.links.map((link) => (
+          <a href={url(link.url)} class="link text-ink-2 hover:text-accent">
+            {link.label}
+          </a>
+        ))}
+      </div>
+    )}
+
+    {hasDetail && (
+      <div class="mt-3">
+        <a href={href} class="meta link text-ink-3 hover:text-accent inline-flex items-center gap-1">
+          <span>Read story</span>
+          <span class="arrow">&rarr;</span>
+        </a>
+      </div>
+    )}
+  </div>
+</article>

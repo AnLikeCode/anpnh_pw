@@ -1,0 +1,320 @@
+---
+/**
+ * Interactive Quantum Sphere
+ * --------------------------
+ * A code-drawn, Bloch-sphere-inspired artwork for the homepage hero.
+ *
+ * - The SVG below is rendered at build time from sphere-geometry.ts, so the
+ *   drawing is complete without JavaScript.
+ * - The small script only adds a bounded, eased tilt toward the pointer on
+ *   devices with a fine pointer. It runs requestAnimationFrame only while
+ *   easing, and does nothing under prefers-reduced-motion.
+ * - Purely decorative: aria-hidden, no focusable elements.
+ */
+import { buildScene, REST, VIEWBOX } from './sphere-geometry';
+
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+const s = buildScene(REST);
+---
+
+<div class:list={['qs', className]} data-quantum-sphere aria-hidden="true">
+  <svg viewBox={VIEWBOX} class="qs-svg" focusable="false" role="presentation">
+    <circle class="qs-outline" cx="0" cy="0" r="100"></circle>
+
+    <path class="qs-grid-back" data-part="gridBack" d={s.gridBack}></path>
+    <path class="qs-eq-back" data-part="equatorBack" d={s.equatorBack}></path>
+    <path class="qs-prec-back" data-part="precessionBack" d={s.precessionBack}></path>
+    <path class="qs-axis-back" data-part="axisBack" d={s.axisBack}></path>
+    <path class="qs-plane" data-part="planeAxes" d={s.planeAxes}></path>
+
+    <path class="qs-grid-front" data-part="gridFront" d={s.gridFront}></path>
+    <path class="qs-eq-front" data-part="equatorFront" d={s.equatorFront}></path>
+    <path class="qs-axis-front" data-part="axisFront" d={s.axisFront}></path>
+
+    <path class="qs-projection" data-part="projection" d={s.projection}></path>
+    <path class="qs-phi" data-part="phiArc" d={s.phiArc}></path>
+    <path class="qs-theta" data-part="thetaArc" d={s.thetaArc}></path>
+    <path class="qs-prec-front" data-part="precessionFront" d={s.precessionFront}></path>
+
+    <path class:list={['qs-vector', s.vectorBehind && 'is-behind']} data-part="vector" d={s.vector}></path>
+    <circle class="qs-origin" cx="0" cy="0" r="1.6"></circle>
+    <circle class="qs-halo" data-part="halo" cx={s.tip.x} cy={s.tip.y} r="7"></circle>
+    <circle class="qs-tip" data-part="tip" cx={s.tip.x} cy={s.tip.y} r="2.9"></circle>
+
+    <text class="qs-label" data-part="zero" x={s.labels.zero.x} y={s.labels.zero.y}>|0⟩</text>
+    <text class="qs-label" data-part="one" x={s.labels.one.x} y={s.labels.one.y}>|1⟩</text>
+    <text class="qs-label qs-label-psi" data-part="psi" x={s.labels.psi.x} y={s.labels.psi.y}>|ψ⟩</text>
+  </svg>
+</div>
+
+<style>
+  .qs {
+    position: relative;
+    aspect-ratio: 300 / 276;
+    width: 100%;
+    color: var(--ink);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .qs-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .qs-svg :global(path),
+  .qs-svg :global(circle) {
+    fill: none;
+    vector-effect: non-scaling-stroke;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .qs-outline {
+    stroke: var(--ink);
+    stroke-opacity: 0.5;
+    stroke-width: 0.9px;
+  }
+  .qs-grid-front {
+    stroke: var(--gray);
+    stroke-opacity: 0.62;
+    stroke-width: 0.6px;
+  }
+  .qs-grid-back {
+    stroke: var(--gray);
+    stroke-opacity: 0.38;
+    stroke-width: 0.55px;
+    stroke-dasharray: 1 3.2;
+  }
+  .qs-eq-front {
+    stroke: var(--ink);
+    stroke-opacity: 0.42;
+    stroke-width: 0.75px;
+  }
+  .qs-eq-back {
+    stroke: var(--ink);
+    stroke-opacity: 0.22;
+    stroke-width: 0.6px;
+    stroke-dasharray: 1.5 3.5;
+  }
+  .qs-axis-front {
+    stroke: var(--ink);
+    stroke-opacity: 0.55;
+    stroke-width: 0.7px;
+  }
+  .qs-axis-back {
+    stroke: var(--ink);
+    stroke-opacity: 0.25;
+    stroke-width: 0.6px;
+    stroke-dasharray: 1.5 3;
+  }
+  .qs-plane {
+    stroke: var(--gray);
+    stroke-opacity: 0.32;
+    stroke-width: 0.55px;
+    stroke-dasharray: 1 2.5;
+  }
+  .qs-projection {
+    stroke: var(--ink);
+    stroke-opacity: 0.38;
+    stroke-width: 0.6px;
+    stroke-dasharray: 2 2.6;
+  }
+  .qs-phi {
+    stroke: var(--ink);
+    stroke-opacity: 0.45;
+    stroke-width: 0.6px;
+  }
+  .qs-theta {
+    stroke: var(--accent);
+    stroke-opacity: 0.9;
+    stroke-width: 0.8px;
+  }
+  .qs-prec-front {
+    stroke: var(--accent);
+    stroke-opacity: 0.5;
+    stroke-width: 0.7px;
+    stroke-dasharray: 2.5 3.5;
+    transition: stroke-opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .qs-prec-back {
+    stroke: var(--accent);
+    stroke-opacity: 0.22;
+    stroke-width: 0.6px;
+    stroke-dasharray: 1 3.5;
+    transition: stroke-opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .qs-vector {
+    stroke: var(--ink);
+    stroke-width: 1.15px;
+  }
+  .qs-vector.is-behind {
+    stroke-opacity: 0.45;
+  }
+  .qs-origin {
+    fill: var(--ink) !important;
+    stroke: none;
+  }
+  .qs-tip {
+    fill: var(--accent) !important;
+    stroke: var(--paper);
+    stroke-width: 1.4px;
+  }
+  .qs-halo {
+    stroke: var(--accent);
+    stroke-width: 0.7px;
+    stroke-opacity: 0;
+    transition: stroke-opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .qs-label {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 10.5px;
+    fill: var(--ink-3);
+    text-anchor: middle;
+    dominant-baseline: middle;
+    user-select: none;
+  }
+  .qs-label-psi {
+    fill: var(--ink);
+    font-size: 11.5px;
+  }
+
+  /* Engaged state, set by the script while the pointer is over the sphere. */
+  .qs.is-engaged .qs-prec-front {
+    stroke-opacity: 0.85;
+  }
+  .qs.is-engaged .qs-prec-back {
+    stroke-opacity: 0.38;
+  }
+  .qs.is-engaged .qs-halo {
+    stroke-opacity: 0.45;
+  }
+</style>
+
+<script>
+  import { buildScene, LIMITS, REST, type Orientation } from './sphere-geometry';
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
+
+  function setup(root: HTMLElement) {
+    const parts = new Map<string, SVGElement>();
+    root.querySelectorAll<SVGElement>('[data-part]').forEach((el) => parts.set(el.dataset.part!, el));
+
+    const current: Orientation = { ...REST };
+    const target: Orientation = { ...REST };
+    let frame = 0;
+    let visible = true;
+
+    const setD = (key: string, d: string) => parts.get(key)?.setAttribute('d', d);
+    const setXY = (key: string, x: number, y: number, attrX = 'x', attrY = 'y') => {
+      const el = parts.get(key);
+      if (!el) return;
+      el.setAttribute(attrX, String(x));
+      el.setAttribute(attrY, String(y));
+    };
+
+    function render() {
+      const s = buildScene(current);
+      setD('gridFront', s.gridFront);
+      setD('gridBack', s.gridBack);
+      setD('equatorFront', s.equatorFront);
+      setD('equatorBack', s.equatorBack);
+      setD('precessionFront', s.precessionFront);
+      setD('precessionBack', s.precessionBack);
+      setD('axisFront', s.axisFront);
+      setD('axisBack', s.axisBack);
+      setD('planeAxes', s.planeAxes);
+      setD('projection', s.projection);
+      setD('phiArc', s.phiArc);
+      setD('thetaArc', s.thetaArc);
+      setD('vector', s.vector);
+      parts.get('vector')?.classList.toggle('is-behind', s.vectorBehind);
+      setXY('tip', s.tip.x, s.tip.y, 'cx', 'cy');
+      setXY('halo', s.tip.x, s.tip.y, 'cx', 'cy');
+      setXY('zero', s.labels.zero.x, s.labels.zero.y);
+      setXY('one', s.labels.one.x, s.labels.one.y);
+      setXY('psi', s.labels.psi.x, s.labels.psi.y);
+    }
+
+    function step() {
+      frame = 0;
+      const k = 0.085;
+      current.yaw += (target.yaw - current.yaw) * k;
+      current.pitch += (target.pitch - current.pitch) * k;
+      const settled = Math.abs(target.yaw - current.yaw) < 0.0004 && Math.abs(target.pitch - current.pitch) < 0.0004;
+      if (settled) {
+        current.yaw = target.yaw;
+        current.pitch = target.pitch;
+      }
+      render();
+      if (!settled && visible) frame = requestAnimationFrame(step);
+    }
+
+    const kick = () => {
+      if (!frame && visible) frame = requestAnimationFrame(step);
+    };
+
+    const clamp = (v: number) => Math.max(-1, Math.min(1, v));
+
+    function onMove(e: PointerEvent) {
+      if (e.pointerType !== 'mouse' && e.pointerType !== 'pen') return;
+      const rect = root.getBoundingClientRect();
+      const nx = clamp(((e.clientX - rect.left) / rect.width) * 2 - 1);
+      const ny = clamp(((e.clientY - rect.top) / rect.height) * 2 - 1);
+      target.yaw = REST.yaw + nx * LIMITS.yaw;
+      target.pitch = REST.pitch - ny * LIMITS.pitch;
+      kick();
+    }
+
+    function onEnter(e: PointerEvent) {
+      if (e.pointerType !== 'mouse' && e.pointerType !== 'pen') return;
+      root.classList.add('is-engaged');
+    }
+
+    function onLeave() {
+      root.classList.remove('is-engaged');
+      target.yaw = REST.yaw;
+      target.pitch = REST.pitch;
+      kick();
+    }
+
+    let active = false;
+    function enable() {
+      if (active) return;
+      active = true;
+      root.addEventListener('pointerenter', onEnter);
+      root.addEventListener('pointermove', onMove);
+      root.addEventListener('pointerleave', onLeave);
+    }
+    function disable() {
+      if (!active) return;
+      active = false;
+      root.removeEventListener('pointerenter', onEnter);
+      root.removeEventListener('pointermove', onMove);
+      root.removeEventListener('pointerleave', onLeave);
+      onLeave();
+    }
+
+    const sync = () => (!reduceMotion.matches && finePointer.matches ? enable() : disable());
+    sync();
+    reduceMotion.addEventListener('change', sync);
+    finePointer.addEventListener('change', sync);
+
+    // Pause any easing while the sphere is off-screen.
+    new IntersectionObserver(([entry]) => {
+      visible = Boolean(entry?.isIntersecting);
+      if (!visible && frame) {
+        cancelAnimationFrame(frame);
+        frame = 0;
+      } else if (visible) {
+        kick();
+      }
+    }).observe(root);
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-quantum-sphere]').forEach(setup);
+</script>

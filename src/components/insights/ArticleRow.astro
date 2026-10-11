@@ -1,0 +1,47 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatDate, readingTime, url } from '../../lib/site';
+
+interface Props {
+  entry: CollectionEntry<'insights'>;
+}
+
+const { entry } = Astro.props;
+const d = entry.data;
+const mins = readingTime(entry.body);
+const href = url(`/insights/${entry.id}`);
+---
+
+<article class="group border-b border-rule py-7 transition-colors duration-200">
+  <div class="flex flex-col gap-2 md:flex-row md:items-baseline md:justify-between">
+    <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+      <h3 class="font-serif text-[1.25rem] leading-snug tracking-[-0.01em]">
+        <a href={href} class="quiet text-ink hover:text-accent">
+          {d.title}
+        </a>
+      </h3>
+      {d.sample && <span class="sample-tag">example</span>}
+    </div>
+    <div class="meta shrink-0">
+      <time datetime={d.date.toISOString()}>{formatDate(d.date)}</time>
+    </div>
+  </div>
+
+  <p class="mt-2 text-[0.9375rem] text-ink-2 max-w-[65ch]">
+    {d.description}
+  </p>
+
+  <div class="meta mt-3.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-ink-3">
+    <span>{mins} min read</span>
+    {d.tags.length > 0 && (
+      <>
+        <span class="text-rule-strong">/</span>
+        <div class="flex flex-wrap gap-2">
+          {d.tags.map((tag) => (
+            <span class="text-ink-3">#{tag}</span>
+          ))}
+        </div>
+      </>
+    )}
+  </div>
+</article>

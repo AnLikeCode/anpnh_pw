@@ -1,0 +1,61 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { initials, url } from '../../lib/site';
+
+interface Props {
+  person: CollectionEntry<'people'>;
+}
+
+const { person } = Astro.props;
+const d = person.data;
+---
+
+<div class="border-t border-rule pt-6">
+  <div class="flex items-start gap-4">
+    {d.portrait ? (
+      <img
+        src={url(d.portrait.src)}
+        alt={d.portrait.alt}
+        class="h-14 w-14 rounded-full object-cover border border-rule shrink-0"
+      />
+    ) : (
+      <div class="flex h-12 w-12 items-center justify-center rounded-full bg-paper-2 border border-rule text-ink-3 font-mono text-sm shrink-0">
+        {initials(d.name)}
+      </div>
+    )}
+
+    <div class="flex-1 min-w-0">
+      <div class="flex flex-wrap items-baseline justify-between gap-2">
+        <h3 class="text-[1.125rem] font-medium text-ink">
+          {d.name}
+        </h3>
+        <span class="meta text-ink-3">{d.relation}</span>
+      </div>
+
+      {d.title && <p class="text-[0.875rem] text-ink-2 mt-0.5">{d.title}</p>}
+      {d.affiliation && <p class="text-[0.8125rem] text-ink-3">{d.affiliation}</p>}
+    </div>
+  </div>
+
+  <div class="prose text-[0.9375rem] text-ink-2 mt-4 leading-relaxed">
+    <slot />
+  </div>
+
+  {d.interests.length > 0 && (
+    <div class="meta mt-4 flex flex-wrap gap-x-3 gap-y-1 text-ink-3">
+      <span class="text-ink-2 font-medium">Interests:</span>
+      {d.interests.map((interest) => (
+        <span>{interest}</span>
+      ))}
+    </div>
+  )}
+
+  {d.website && (
+    <div class="mt-4">
+      <a href={url(d.website)} class="meta link text-ink-3 hover:text-accent inline-flex items-center gap-1">
+        <span>Personal / institutional page</span>
+        <span class="arrow-ne">&nearr;</span>
+      </a>
+    </div>
+  )}
+</div>
