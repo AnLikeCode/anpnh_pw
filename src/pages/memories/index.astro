@@ -1,30 +1,387 @@
 ---
 import Base from '../../layouts/Base.astro';
-import MemoryCard from '../../components/memories/MemoryCard.astro';
-import { getPage, published } from '../../lib/site';
+import { getPage, published, formatDate, url } from '../../lib/site';
 
 const page = await getPage('memories');
 const entries = await published('memories');
+
+// Aggregate every photograph (both cover and additional photos) into a unified exhibition roll
+interface PhotoItem {
+  id: string;
+  src: string;
+  alt: string;
+  title: string;
+  caption: string;
+  location?: string;
+  date: Date;
+  dateStr: string;
+  aspectClass?: string;
+}
+
+const photos: PhotoItem[] = [];
+
+entries.forEach((entry) => {
+  const d = entry.data;
+  // Add cover photo
+  photos.push({
+    id: `${entry.id}-cover`,
+    src: d.cover.src,
+    alt: d.cover.alt,
+    title: d.title,
+    caption: d.cover.caption || d.caption,
+    location: d.location,
+    date: d.date,
+    dateStr: formatDate(d.date),
+  });
+
+  // Add additional gallery photos if any
+  d.photos.forEach((p, idx) => {
+    photos.push({
+      id: `${entry.id}-photo-${idx}`,
+      src: p.src,
+      alt: p.alt,
+      title: d.title,
+      caption: p.caption || d.caption,
+      location: d.location,
+      date: d.date,
+      dateStr: formatDate(d.date),
+    });
+  });
+});
 ---
 
 <Base title={page?.data.title || 'Memories'} description={page?.data.description}>
   <div class="wrap py-12 md:py-20">
+    <!-- Editorial Header -->
     <header class="mb-14 border-b border-rule pb-10">
-      <h1 class="text-3xl font-medium tracking-tight text-ink md:text-4xl">
-        {page?.data.title || 'Memories'}
-      </h1>
-      {page?.data.intro && (
-        <p class="mt-4 font-serif italic text-lg md:text-xl text-ink-2 max-w-[65ch] leading-relaxed">
-          {page.data.intro}
-        </p>
-      )}
+      <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p class="meta text-accent mb-2 tracking-wider">PHOTOGRAPHY ARCHIVE</p>
+          <h1 class="text-3xl font-medium tracking-tight text-ink md:text-5xl">
+            {page?.data.title || 'Memories'}
+          </h1>
+          <p class="mt-3 font-serif italic text-base md:text-lg text-ink-2 max-w-[55ch] leading-relaxed">
+            {page?.data.intro || 'A quiet visual archive of places, light, and moments preserved along the journey.'}
+          </p>
+        </div>
+
+        <!-- View Controls & Metadata -->
+        <div class="flex flex-wrap items-center gap-4 text-xs font-mono text-ink-3">
+          <span>{photos.length} prints</span>
+          <span class="text-rule-strong">/</span>
+          <div class="inline-flex rounded-[3px] border border-rule p-0.5 bg-paper-2" role="group" aria-label="View mode">
+            <button
+              type="button"
+              id="btn-curated"
+              class="px-2.5 py-1 text-xs rounded-[2px] transition-colors duration-200 text-ink-3 hover:text-ink"
+              data-view="curated"
+            >
+              Curated Flow
+            </button>
+            <button
+              type="button"
+              id="btn-masonry"
+              class="px-2.5 py-1 text-xs rounded-[2px] transition-colors duration-200 bg-paper text-ink font-medium shadow-xs"
+              data-view="masonry"
+            >
+              Wall Grid
+            </button>
+          </div>
+        </div>
+      </div>
     </header>
 
-    <!-- Staggered editorial visual archive (Pinterest moodboard inspired, preserving aspect ratios) -->
-    <div class="columns-1 sm:columns-2 lg:columns-3 gap-8 [column-fill:_balance]">
-      {entries.map((entry) => (
-        <MemoryCard entry={entry} />
-      ))}
+    <!-- 1. CURATED ARTISTIC FLOW (Alternative View) -->
+    <div id="view-curated-container" class="hidden space-y-24 md:space-y-36">
+      {
+        photos.map((item, index) => {
+          const isLarge = index === 0 || index === 4;
+          const isOffsetRight = index === 2 || index === 6;
+
+          return (
+            <figure
+              class:list={[
+                'photo-frame group transition-opacity duration-300',
+                isLarge && 'max-w-4xl mx-auto',
+                isOffsetRight && 'max-w-2xl md:ml-auto md:mr-6',
+                !isLarge && !isOffsetRight && 'max-w-2xl mx-auto',
+              ]}
+              data-index={index}
+            >
+              <!-- Photographic Print Box -->
+              <div
+                class="photo-trigger cursor-zoom-in overflow-hidden rounded-[2px] border border-rule bg-paper-2 p-2 md:p-3 shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.25)] transition-all duration-500 group-hover:border-ink/30"
+                data-photo-src={url(item.src)}
+                data-photo-alt={item.alt}
+                data-photo-title={item.title}
+                data-photo-caption={item.caption}
+                data-photo-meta={`${item.location ? item.location + ' / ' : ''}${item.dateStr}`}
+                data-photo-index={index}
+              >
+                <div class="overflow-hidden rounded-[1px] bg-paper">
+                  <img
+                    src={url(item.src)}
+                    alt={item.alt}
+                    loading={index < 2 ? 'eager' : 'lazy'}
+                    decoding="async"
+                    class="w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.012]"
+                  />
+                </div>
+              </div>
+
+              <!-- Exhibition Label / Caption -->
+              <figcaption class="mt-4 px-2 space-y-1.5">
+                <div class="meta flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-ink-3 text-[0.8125rem]">
+                  <span class="font-medium text-ink-2">{item.title}</span>
+                  <div class="flex items-center gap-2">
+                    {item.location && <span>{item.location}</span>}
+                    {item.location && <span class="text-rule-strong">/</span>}
+                    <time datetime={item.date.toISOString()}>{item.dateStr}</time>
+                  </div>
+                </div>
+
+                <p class="font-serif italic text-sm md:text-[0.9375rem] text-ink-2 leading-relaxed max-w-[62ch]">
+                  {item.caption}
+                </p>
+              </figcaption>
+            </figure>
+          );
+        })
+      }
+    </div>
+
+    <!-- 2. MASONRY GRID (Default Wall View) -->
+    <div id="view-masonry-container" class="columns-1 sm:columns-2 lg:columns-3 gap-8 [column-fill:_balance]">
+      {
+        photos.map((item, index) => (
+          <figure class="break-inside-avoid mb-10 group" data-index={index}>
+            <div
+              class="photo-trigger cursor-zoom-in overflow-hidden rounded-[2px] border border-rule bg-paper-2 p-2 shadow-xs transition-all duration-300 group-hover:border-ink/30"
+              data-photo-src={url(item.src)}
+              data-photo-alt={item.alt}
+              data-photo-title={item.title}
+              data-photo-caption={item.caption}
+              data-photo-meta={`${item.location ? item.location + ' / ' : ''}${item.dateStr}`}
+              data-photo-index={index}
+            >
+              <div class="overflow-hidden rounded-[1px]">
+                <img
+                  src={url(item.src)}
+                  alt={item.alt}
+                  loading="lazy"
+                  decoding="async"
+                  class="w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.015]"
+                />
+              </div>
+            </div>
+
+            <figcaption class="mt-3 px-1 space-y-1">
+              <div class="meta flex items-baseline justify-between gap-2 text-ink-3 text-xs">
+                <span class="font-medium text-ink-2 truncate">{item.title}</span>
+                <time datetime={item.date.toISOString()}>{item.dateStr}</time>
+              </div>
+              <p class="font-serif italic text-xs md:text-sm text-ink-2 leading-relaxed">
+                {item.caption}
+              </p>
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+  </div>
+
+  <!-- FULLSCREEN LIGHTBOX MODAL -->
+  <div
+    id="lightbox"
+    class="fixed inset-0 z-50 hidden flex-col justify-between bg-ink/95 text-paper backdrop-blur-md transition-opacity duration-300 opacity-0"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Photo Lightbox"
+  >
+    <!-- Top Bar -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-paper/10">
+      <div class="font-mono text-xs text-paper/70 tracking-widest">
+        <span id="lb-counter">01 / 08</span>
+      </div>
+      <button
+        type="button"
+        id="lb-close"
+        class="text-paper/70 hover:text-paper text-sm font-mono tracking-wider p-2 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+        aria-label="Close exhibition view"
+      >
+        [CLOSE ESC]
+      </button>
+    </div>
+
+    <!-- Center Stage Photograph -->
+    <div class="relative flex-1 flex items-center justify-center p-4 sm:p-8 overflow-hidden select-none" id="lb-stage">
+      <button
+        type="button"
+        id="lb-prev"
+        class="absolute left-4 top-1/2 -translate-y-1/2 p-3 text-paper/50 hover:text-paper font-mono text-lg transition-colors z-10 focus-visible:outline-none"
+        aria-label="Previous photograph"
+      >
+        &larr;
+      </button>
+
+      <img
+        id="lb-img"
+        src=""
+        alt=""
+        class="max-h-[75vh] max-w-[90vw] object-contain rounded-[2px] shadow-2xl transition-transform duration-300"
+      />
+
+      <button
+        type="button"
+        id="lb-next"
+        class="absolute right-4 top-1/2 -translate-y-1/2 p-3 text-paper/50 hover:text-paper font-mono text-lg transition-colors z-10 focus-visible:outline-none"
+        aria-label="Next photograph"
+      >
+        &rarr;
+      </button>
+    </div>
+
+    <!-- Bottom Caption Bar -->
+    <div class="border-t border-paper/10 px-6 py-4 max-w-4xl mx-auto w-full text-center space-y-1">
+      <p id="lb-title" class="text-sm font-medium tracking-tight text-paper"></p>
+      <p id="lb-caption" class="font-serif italic text-sm text-paper/85"></p>
+      <p id="lb-meta" class="font-mono text-[11px] text-paper/60 pt-0.5"></p>
     </div>
   </div>
 </Base>
+
+<script>
+  // 1. View Mode Switcher (Curated Flow vs Masonry Wall)
+  const btnCurated = document.getElementById('btn-curated');
+  const btnMasonry = document.getElementById('btn-masonry');
+  const containerCurated = document.getElementById('view-curated-container');
+  const containerMasonry = document.getElementById('view-masonry-container');
+
+  function setView(mode: 'curated' | 'masonry') {
+    if (mode === 'curated') {
+      containerCurated?.classList.remove('hidden');
+      containerMasonry?.classList.add('hidden');
+      btnCurated?.classList.add('bg-paper', 'text-ink', 'font-medium', 'shadow-xs');
+      btnCurated?.classList.remove('text-ink-3');
+      btnMasonry?.classList.remove('bg-paper', 'text-ink', 'font-medium', 'shadow-xs');
+      btnMasonry?.classList.add('text-ink-3');
+    } else {
+      containerCurated?.classList.add('hidden');
+      containerMasonry?.classList.remove('hidden');
+      btnMasonry?.classList.add('bg-paper', 'text-ink', 'font-medium', 'shadow-xs');
+      btnMasonry?.classList.remove('text-ink-3');
+      btnCurated?.classList.remove('bg-paper', 'text-ink', 'font-medium', 'shadow-xs');
+      btnCurated?.classList.add('text-ink-3');
+    }
+  }
+
+  btnCurated?.addEventListener('click', () => setView('curated'));
+  btnMasonry?.addEventListener('click', () => setView('masonry'));
+
+  // 2. Fullscreen Lightbox logic
+  const lightbox = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lb-img') as HTMLImageElement;
+  const lbTitle = document.getElementById('lb-title');
+  const lbCaption = document.getElementById('lb-caption');
+  const lbMeta = document.getElementById('lb-meta');
+  const lbCounter = document.getElementById('lb-counter');
+  const lbClose = document.getElementById('lb-close');
+  const lbPrev = document.getElementById('lb-prev');
+  const lbNext = document.getElementById('lb-next');
+  const lbStage = document.getElementById('lb-stage');
+
+  const triggers = Array.from(document.querySelectorAll<HTMLElement>('.photo-trigger'));
+  let currentIndex = 0;
+
+  // Deduplicate triggers by source so index navigation works cleanly
+  const uniqueItems: {
+    src: string;
+    alt: string;
+    title: string;
+    caption: string;
+    meta: string;
+  }[] = [];
+
+  const seen = new Set<string>();
+  triggers.forEach((el) => {
+    const src = el.dataset.photoSrc || '';
+    if (!seen.has(src)) {
+      seen.add(src);
+      uniqueItems.push({
+        src,
+        alt: el.dataset.photoAlt || '',
+        title: el.dataset.photoTitle || '',
+        caption: el.dataset.photoCaption || '',
+        meta: el.dataset.photoMeta || '',
+      });
+    }
+  });
+
+  function openLightbox(index: number) {
+    if (!lightbox || !lbImg || uniqueItems.length === 0) return;
+    currentIndex = (index + uniqueItems.length) % uniqueItems.length;
+    const item = uniqueItems[currentIndex]!;
+
+    lbImg.src = item.src;
+    lbImg.alt = item.alt;
+    if (lbTitle) lbTitle.textContent = item.title;
+    if (lbCaption) lbCaption.textContent = item.caption;
+    if (lbMeta) lbMeta.textContent = item.meta;
+    if (lbCounter) {
+      const cur = String(currentIndex + 1).padStart(2, '0');
+      const total = String(uniqueItems.length).padStart(2, '0');
+      lbCounter.textContent = `${cur} / ${total}`;
+    }
+
+    lightbox.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    requestAnimationFrame(() => {
+      lightbox.classList.remove('opacity-0');
+      lightbox.classList.add('opacity-100');
+    });
+  }
+
+  function closeLightbox() {
+    if (!lightbox) return;
+    lightbox.classList.remove('opacity-100');
+    lightbox.classList.add('opacity-0');
+    document.body.style.overflow = '';
+    setTimeout(() => {
+      lightbox.classList.add('hidden');
+    }, 300);
+  }
+
+  function nextPhoto() {
+    openLightbox(currentIndex + 1);
+  }
+
+  function prevPhoto() {
+    openLightbox(currentIndex - 1);
+  }
+
+  // Attach click events
+  triggers.forEach((trigger) => {
+    trigger.addEventListener('click', () => {
+      const src = trigger.dataset.photoSrc || '';
+      const idx = uniqueItems.findIndex((item) => item.src === src);
+      openLightbox(idx >= 0 ? idx : 0);
+    });
+  });
+
+  lbClose?.addEventListener('click', closeLightbox);
+  lbNext?.addEventListener('click', nextPhoto);
+  lbPrev?.addEventListener('click', prevPhoto);
+
+  // Close when clicking directly on the stage background
+  lbStage?.addEventListener('click', (e) => {
+    if (e.target === lbStage) closeLightbox();
+  });
+
+  // Keyboard navigation
+  window.addEventListener('keydown', (e) => {
+    if (!lightbox || lightbox.classList.contains('hidden')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowRight') nextPhoto();
+    if (e.key === 'ArrowLeft') prevPhoto();
+  });
+</script>

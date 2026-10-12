@@ -6,15 +6,15 @@
 # The text below the second "---" is your full biography (About page).
 # =====================================================================
 
-name: Your Name # PLACEHOLDER
-role: Researcher in quantum computing # PLACEHOLDER: e.g. "PhD candidate, Department of Physics"
-affiliation: University name # PLACEHOLDER (optional)
+name: An Phan # PLACEHOLDER
+role: Researcher @ QuantumAI.Cloud Lab # PLACEHOLDER: e.g. "PhD candidate, Department of Physics"
+affiliation: University of Information Technology # PLACEHOLDER (optional)
 
 # One line describing your research identity (shown under your name and in page titles).
-identity: Quantum algorithms and quantum machine learning
+identity: A Scientist or an Engineer?
 
 # Hero statement. Keep it under 20 words.
-statement: A short personal statement goes here. Say which questions you study, in your own voice. # PLACEHOLDER
+statement: He has been an active research member of QuantumAI.Cloud Lab (QAC Lab) since early 2024. In September 2026, he joined the Viettel Institute of Strategic Technology and Industry as a Quantum Algorithm Engineer Intern. # PLACEHOLDER
 
 # Homepage "About" summary, two to four sentences.
 summary: >-
@@ -23,41 +23,41 @@ summary: >-
   keep it plain. A sentence about what motivates the work helps visitors understand you.
 
 # Optional. Shown on the About page.
-currentFocus: Placeholder. One or two sentences on what you are working on now.
+currentFocus: I actively explore practical applications of quantum algorithms, distributed quantum machine learning, and quantum error correction for reliable quantum computing. I am particularly interested in efficient resource management for quantum cloud computing.
 
 # Optional portrait. Put the file in public/images/profile/ and uncomment.
 # portrait:
-#   src: /images/profile/portrait.jpg
+#   src: public/images/profile/myface.png
 #   alt: Portrait of Your Name
 
-email: you@example.org # PLACEHOLDER
+email: anpnh.work@gmail.com # PLACEHOLDER
 
 # Profile links. Remove the ones you do not use, add others freely.
 links:
   - label: Google Scholar
-    url: https://scholar.google.com/ # PLACEHOLDER
-  - label: ORCID
-    url: https://orcid.org/ # PLACEHOLDER
+    url: https://scholar.google.com/citations?hl=vi&view_op=list_works&gmla=AERr9JFsrW6GhWFf6ZWYEhlGVIBqx8Nt1imFAGy0glIF07iopOYUJuygzPM2K63ECpl06W231Cb7Z4rfd-5BaRheS7594XST8VA&user=qQvNTXkAAAAJ # PLACEHOLDER
+  - label: Linkedin
+    url: https://www.linkedin.com/in/anphan29 # PLACEHOLDER
   - label: GitHub
-    url: https://github.com/ # PLACEHOLDER
+    url: https://github.com/AnLikeCode # PLACEHOLDER
 
 interests:
   - Quantum algorithms
   - Quantum machine learning
-  - Variational methods # PLACEHOLDER: edit this list
-  - Quantum information theory # PLACEHOLDER
+  - Quantum error correction  
+  - Quantum optimisation 
 
 education:
-  - degree: Degree title # PLACEHOLDER
-    institution: Institution name
-    years: Year - present
+  - degree: Bachelor of Computer Networks and Data Communications
+    institution: University of Information Technology, Vietnam National University Ho Chi Minh City
+    years: 2023 - 2027
   - degree: Previous degree # PLACEHOLDER
     institution: Institution name
     years: Year - Year
     note: Optional thesis title or note
 
 # A small closing line shown in the footer of every page.
-footerLine: Placeholder closing line. Something short you would like to leave visitors with.
+footerLine: Quantum is not just science fiction.
 ---
 
 This is placeholder biography text. Replace it with your own story, written in Markdown.

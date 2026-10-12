@@ -9,7 +9,7 @@ interface Props {
 
 const { entry, class: className } = Astro.props;
 const d = entry.data;
-const href = url(`/memories/${entry.id}`);
+const href = url('/memories');
 ---
 
 <article class:list={['group block break-inside-avoid mb-10', className]}>

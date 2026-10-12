@@ -3,13 +3,13 @@
 # RESEARCH GROUP (PLACEHOLDER)
 # You can add more files in this folder if you belong to several groups.
 # =====================================================================
-name: Research Group Name # PLACEHOLDER
-institution: Institution name # PLACEHOLDER
-website: https://example.org # PLACEHOLDER
+name: QuantumAI.Cloud Lab # PLACEHOLDER
+institution: Research Group  # PLACEHOLDER
+website: https://quantumai.cloud/ # PLACEHOLDER
 directions:
-  - Research direction one # PLACEHOLDER
-  - Research direction two
-  - Research direction three
+  - Quantum Cloud & Distributed Computing # PLACEHOLDER
+  - Reliable AI for Quantum Software & Systems
+  - Quantum Machine Learning & Optimisation Applications
 # Optional logo or group photograph (files in public/images/people/):
 # logo:
 #   src: /images/people/group-logo.svg

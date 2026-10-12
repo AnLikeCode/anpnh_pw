@@ -4,7 +4,7 @@
 # Shown on the homepage and on the About page. "order" controls position.
 # The text after the second "---" is a short introduction.
 # =====================================================================
-name: First Supervisor Name # PLACEHOLDER
+name: Hoa Thanh Nguyen # PLACEHOLDER
 title: Academic title # PLACEHOLDER: e.g. "Professor of Theoretical Physics"
 relation: Principal supervisor
 order: 1

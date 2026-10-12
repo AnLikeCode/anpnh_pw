@@ -2,7 +2,7 @@
 # =====================================================================
 # SECOND SUPERVISOR (PLACEHOLDER)
 # =====================================================================
-name: Second Supervisor Name # PLACEHOLDER
+name: Dang Van Huynh # PLACEHOLDER
 title: Academic title # PLACEHOLDER
 relation: Co-supervisor
 order: 2
