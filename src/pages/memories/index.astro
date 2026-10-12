@@ -1,59 +1,16 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { getPage, published, formatDate, url } from '../../lib/site';
+import { getPage, url } from '../../lib/site';
+import { getMemoryPhotos } from '../../lib/memories';
 
 const page = await getPage('memories');
-const entries = await published('memories');
-
-// Aggregate every photograph (both cover and additional photos) into a unified exhibition roll
-interface PhotoItem {
-  id: string;
-  src: string;
-  alt: string;
-  title: string;
-  caption: string;
-  location?: string;
-  date: Date;
-  dateStr: string;
-  aspectClass?: string;
-}
-
-const photos: PhotoItem[] = [];
-
-entries.forEach((entry) => {
-  const d = entry.data;
-  // Add cover photo
-  photos.push({
-    id: `${entry.id}-cover`,
-    src: d.cover.src,
-    alt: d.cover.alt,
-    title: d.title,
-    caption: d.cover.caption || d.caption,
-    location: d.location,
-    date: d.date,
-    dateStr: formatDate(d.date),
-  });
-
-  // Add additional gallery photos if any
-  d.photos.forEach((p, idx) => {
-    photos.push({
-      id: `${entry.id}-photo-${idx}`,
-      src: p.src,
-      alt: p.alt,
-      title: d.title,
-      caption: p.caption || d.caption,
-      location: d.location,
-      date: d.date,
-      dateStr: formatDate(d.date),
-    });
-  });
-});
+const photos = getMemoryPhotos();
 ---
 
 <Base title={page?.data.title || 'Memories'} description={page?.data.description}>
   <div class="wrap py-12 md:py-20">
     <!-- Editorial Header -->
-    <header class="mb-14 border-b border-rule pb-10">
+    <header class="mb-12 border-b border-rule pb-8">
       <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
           <p class="meta text-accent mb-2 tracking-wider">PHOTOGRAPHY ARCHIVE</p>
@@ -61,7 +18,7 @@ entries.forEach((entry) => {
             {page?.data.title || 'Memories'}
           </h1>
           <p class="mt-3 font-serif italic text-base md:text-lg text-ink-2 max-w-[55ch] leading-relaxed">
-            {page?.data.intro || 'A quiet visual archive of places, light, and moments preserved along the journey.'}
+            {page?.data.intro || 'A visual archive of prints and moments.'}
           </p>
         </div>
 
@@ -72,27 +29,53 @@ entries.forEach((entry) => {
           <div class="inline-flex rounded-[3px] border border-rule p-0.5 bg-paper-2" role="group" aria-label="View mode">
             <button
               type="button"
-              id="btn-curated"
-              class="px-2.5 py-1 text-xs rounded-[2px] transition-colors duration-200 text-ink-3 hover:text-ink"
-              data-view="curated"
-            >
-              Curated Flow
-            </button>
-            <button
-              type="button"
               id="btn-masonry"
               class="px-2.5 py-1 text-xs rounded-[2px] transition-colors duration-200 bg-paper text-ink font-medium shadow-xs"
               data-view="masonry"
             >
               Wall Grid
             </button>
+            <button
+              type="button"
+              id="btn-curated"
+              class="px-2.5 py-1 text-xs rounded-[2px] transition-colors duration-200 text-ink-3 hover:text-ink"
+              data-view="curated"
+            >
+              Curated Flow
+            </button>
           </div>
         </div>
       </div>
     </header>
 
-    <!-- 1. CURATED ARTISTIC FLOW (Alternative View) -->
-    <div id="view-curated-container" class="hidden space-y-24 md:space-y-36">
+    <!-- 1. MASONRY GRID (Default Wall View) -->
+    <div id="view-masonry-container" class="columns-1 sm:columns-2 lg:columns-3 gap-6 md:gap-8 [column-fill:_balance]">
+      {
+        photos.map((item, index) => (
+          <figure class="break-inside-avoid mb-6 md:mb-8 group" data-index={index}>
+            <div
+              class="photo-trigger cursor-zoom-in overflow-hidden rounded-[2px] border border-rule bg-paper-2 p-2 shadow-xs transition-all duration-300 group-hover:border-ink/30"
+              data-photo-src={url(item.src)}
+              data-photo-alt={item.alt}
+              data-photo-index={index}
+            >
+              <div class="overflow-hidden rounded-[1px] bg-paper">
+                <img
+                  src={url(item.src)}
+                  alt={item.alt}
+                  loading={index < 4 ? 'eager' : 'lazy'}
+                  decoding="async"
+                  class="w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.015]"
+                />
+              </div>
+            </div>
+          </figure>
+        ))
+      }
+    </div>
+
+    <!-- 2. CURATED ARTISTIC FLOW (Alternative View) -->
+    <div id="view-curated-container" class="hidden space-y-16 md:space-y-24">
       {
         photos.map((item, index) => {
           const isLarge = index === 0 || index === 4;
@@ -108,14 +91,10 @@ entries.forEach((entry) => {
               ]}
               data-index={index}
             >
-              <!-- Photographic Print Box -->
               <div
-                class="photo-trigger cursor-zoom-in overflow-hidden rounded-[2px] border border-rule bg-paper-2 p-2 md:p-3 shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.25)] transition-all duration-500 group-hover:border-ink/30"
+                class="photo-trigger cursor-zoom-in overflow-hidden rounded-[2px] border border-rule bg-paper-2 p-2.5 md:p-3 shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.25)] transition-all duration-500 group-hover:border-ink/30"
                 data-photo-src={url(item.src)}
                 data-photo-alt={item.alt}
-                data-photo-title={item.title}
-                data-photo-caption={item.caption}
-                data-photo-meta={`${item.location ? item.location + ' / ' : ''}${item.dateStr}`}
                 data-photo-index={index}
               >
                 <div class="overflow-hidden rounded-[1px] bg-paper">
@@ -128,64 +107,9 @@ entries.forEach((entry) => {
                   />
                 </div>
               </div>
-
-              <!-- Exhibition Label / Caption -->
-              <figcaption class="mt-4 px-2 space-y-1.5">
-                <div class="meta flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-ink-3 text-[0.8125rem]">
-                  <span class="font-medium text-ink-2">{item.title}</span>
-                  <div class="flex items-center gap-2">
-                    {item.location && <span>{item.location}</span>}
-                    {item.location && <span class="text-rule-strong">/</span>}
-                    <time datetime={item.date.toISOString()}>{item.dateStr}</time>
-                  </div>
-                </div>
-
-                <p class="font-serif italic text-sm md:text-[0.9375rem] text-ink-2 leading-relaxed max-w-[62ch]">
-                  {item.caption}
-                </p>
-              </figcaption>
             </figure>
           );
         })
-      }
-    </div>
-
-    <!-- 2. MASONRY GRID (Default Wall View) -->
-    <div id="view-masonry-container" class="columns-1 sm:columns-2 lg:columns-3 gap-8 [column-fill:_balance]">
-      {
-        photos.map((item, index) => (
-          <figure class="break-inside-avoid mb-10 group" data-index={index}>
-            <div
-              class="photo-trigger cursor-zoom-in overflow-hidden rounded-[2px] border border-rule bg-paper-2 p-2 shadow-xs transition-all duration-300 group-hover:border-ink/30"
-              data-photo-src={url(item.src)}
-              data-photo-alt={item.alt}
-              data-photo-title={item.title}
-              data-photo-caption={item.caption}
-              data-photo-meta={`${item.location ? item.location + ' / ' : ''}${item.dateStr}`}
-              data-photo-index={index}
-            >
-              <div class="overflow-hidden rounded-[1px]">
-                <img
-                  src={url(item.src)}
-                  alt={item.alt}
-                  loading="lazy"
-                  decoding="async"
-                  class="w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.015]"
-                />
-              </div>
-            </div>
-
-            <figcaption class="mt-3 px-1 space-y-1">
-              <div class="meta flex items-baseline justify-between gap-2 text-ink-3 text-xs">
-                <span class="font-medium text-ink-2 truncate">{item.title}</span>
-                <time datetime={item.date.toISOString()}>{item.dateStr}</time>
-              </div>
-              <p class="font-serif italic text-xs md:text-sm text-ink-2 leading-relaxed">
-                {item.caption}
-              </p>
-            </figcaption>
-          </figure>
-        ))
       }
     </div>
   </div>
@@ -201,7 +125,7 @@ entries.forEach((entry) => {
     <!-- Top Bar -->
     <div class="flex items-center justify-between px-6 py-4 border-b border-paper/10">
       <div class="font-mono text-xs text-paper/70 tracking-widest">
-        <span id="lb-counter">01 / 08</span>
+        <span id="lb-counter">01 / 01</span>
       </div>
       <button
         type="button"
@@ -228,7 +152,7 @@ entries.forEach((entry) => {
         id="lb-img"
         src=""
         alt=""
-        class="max-h-[75vh] max-w-[90vw] object-contain rounded-[2px] shadow-2xl transition-transform duration-300"
+        class="max-h-[85vh] max-w-[92vw] object-contain rounded-[2px] shadow-2xl transition-transform duration-300"
       />
 
       <button
@@ -240,18 +164,11 @@ entries.forEach((entry) => {
         &rarr;
       </button>
     </div>
-
-    <!-- Bottom Caption Bar -->
-    <div class="border-t border-paper/10 px-6 py-4 max-w-4xl mx-auto w-full text-center space-y-1">
-      <p id="lb-title" class="text-sm font-medium tracking-tight text-paper"></p>
-      <p id="lb-caption" class="font-serif italic text-sm text-paper/85"></p>
-      <p id="lb-meta" class="font-mono text-[11px] text-paper/60 pt-0.5"></p>
-    </div>
   </div>
 </Base>
 
 <script>
-  // 1. View Mode Switcher (Curated Flow vs Masonry Wall)
+  // 1. View Mode Switcher (Masonry Wall vs Curated Flow)
   const btnCurated = document.getElementById('btn-curated');
   const btnMasonry = document.getElementById('btn-masonry');
   const containerCurated = document.getElementById('view-curated-container');
@@ -281,9 +198,6 @@ entries.forEach((entry) => {
   // 2. Fullscreen Lightbox logic
   const lightbox = document.getElementById('lightbox');
   const lbImg = document.getElementById('lb-img') as HTMLImageElement;
-  const lbTitle = document.getElementById('lb-title');
-  const lbCaption = document.getElementById('lb-caption');
-  const lbMeta = document.getElementById('lb-meta');
   const lbCounter = document.getElementById('lb-counter');
   const lbClose = document.getElementById('lb-close');
   const lbPrev = document.getElementById('lb-prev');
@@ -293,16 +207,10 @@ entries.forEach((entry) => {
   const triggers = Array.from(document.querySelectorAll<HTMLElement>('.photo-trigger'));
   let currentIndex = 0;
 
-  // Deduplicate triggers by source so index navigation works cleanly
-  const uniqueItems: {
-    src: string;
-    alt: string;
-    title: string;
-    caption: string;
-    meta: string;
-  }[] = [];
-
+  // Deduplicate triggers by source
+  const uniqueItems: { src: string; alt: string }[] = [];
   const seen = new Set<string>();
+
   triggers.forEach((el) => {
     const src = el.dataset.photoSrc || '';
     if (!seen.has(src)) {
@@ -310,9 +218,6 @@ entries.forEach((entry) => {
       uniqueItems.push({
         src,
         alt: el.dataset.photoAlt || '',
-        title: el.dataset.photoTitle || '',
-        caption: el.dataset.photoCaption || '',
-        meta: el.dataset.photoMeta || '',
       });
     }
   });
@@ -324,9 +229,7 @@ entries.forEach((entry) => {
 
     lbImg.src = item.src;
     lbImg.alt = item.alt;
-    if (lbTitle) lbTitle.textContent = item.title;
-    if (lbCaption) lbCaption.textContent = item.caption;
-    if (lbMeta) lbMeta.textContent = item.meta;
+
     if (lbCounter) {
       const cur = String(currentIndex + 1).padStart(2, '0');
       const total = String(uniqueItems.length).padStart(2, '0');

@@ -4,7 +4,7 @@ import QuantumSphere from '../components/visual/QuantumSphere.astro';
 import ResearchRow from '../components/research/ResearchRow.astro';
 import JourneyItem from '../components/journey/JourneyItem.astro';
 import ArticleRow from '../components/insights/ArticleRow.astro';
-import MemoryCard from '../components/memories/MemoryCard.astro';
+import { getMemoryPhotos } from '../lib/memories';
 import PersonCard from '../components/people/PersonCard.astro';
 import GroupCard from '../components/people/GroupCard.astro';
 import { getProfile, getPeople, getGroups, published, pickFeatured, url } from '../lib/site';
@@ -23,8 +23,8 @@ const recentJourney = allJourney.slice(0, siteConfig.home.journey);
 const allInsights = await published('insights');
 const featuredInsights = pickFeatured(allInsights, siteConfig.home.insights);
 
-const allMemories = await published('memories');
-const previewMemories = pickFeatured(allMemories, siteConfig.home.memories);
+const allMemories = getMemoryPhotos();
+const previewMemories = allMemories.slice(0, siteConfig.home.memories);
 
 const people = await getPeople();
 const groups = await getGroups();
@@ -176,9 +176,22 @@ const groups = await getGroups();
       </a>
     </div>
 
-    <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
-      {previewMemories.map((entry) => (
-        <MemoryCard entry={entry} />
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
+      {previewMemories.map((photo) => (
+        <a
+          href={url('/memories')}
+          class="group block overflow-hidden rounded-[2px] border border-rule bg-paper-2 p-2 shadow-xs transition-all duration-300 hover:border-ink/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        >
+          <div class="overflow-hidden rounded-[1px] bg-paper aspect-[4/3]">
+            <img
+              src={url(photo.src)}
+              alt={photo.alt}
+              loading="lazy"
+              decoding="async"
+              class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+            />
+          </div>
+        </a>
       ))}
     </div>
   </section>
