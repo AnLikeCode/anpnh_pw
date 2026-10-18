@@ -100,32 +100,32 @@ const previewMemories = allMemories.slice(0, siteConfig.home.memories);
   <!-- Certifications -->
   {certificates.length > 0 && (
     <section class="wrap py-16 md:py-24 border-b border-rule">
-      <div class="flex flex-col gap-2 md:flex-row md:items-baseline md:justify-between mb-10">
+      <div class="flex flex-col gap-2 md:flex-row md:items-baseline md:justify-between mb-8">
         <div>
           <h2 class="h-section">Certifications</h2>
           <p class="mt-1 text-[0.875rem] text-ink-3 font-serif italic">
-            Verified credentials in quantum information, machine learning, and error correction.
+            Selected credentials and awards in quantum computing.
           </p>
         </div>
         <span class="meta text-ink-3 font-mono text-xs">{certificates.length} credentials</span>
       </div>
 
-      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="flex flex-wrap items-center gap-4 sm:gap-5">
         {certificates.map((cert, index) => (
-          <figure class="group">
+          <figure class="group shrink-0">
             <div
-              class="cert-trigger cursor-zoom-in overflow-hidden rounded-[2px] border border-rule bg-paper-2 p-2.5 shadow-xs transition-all duration-300 group-hover:border-ink/30"
+              class="cert-trigger cursor-zoom-in overflow-hidden rounded-[2px] border border-rule bg-paper-2 p-1.5 sm:p-2 shadow-xs transition-all duration-300 group-hover:border-ink/40 group-hover:-translate-y-0.5"
               data-cert-src={url(cert.src)}
               data-cert-alt={cert.alt}
               data-cert-index={index}
             >
-              <div class="overflow-hidden rounded-[1px] bg-white aspect-[4/3] flex items-center justify-center">
+              <div class="overflow-hidden rounded-[1px] bg-white">
                 <img
                   src={url(cert.src)}
                   alt={cert.alt}
                   loading="lazy"
                   decoding="async"
-                  class="w-full h-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+                  class="block h-28 sm:h-32 md:h-36 w-auto object-contain transition-transform duration-500 ease-out group-hover:scale-[1.02]"
                 />
               </div>
             </div>
