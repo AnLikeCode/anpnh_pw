@@ -64,4 +64,4 @@ This is placeholder biography text. Replace it with your own story, written in M
 
 A good biography usually covers where you studied, how you arrived at quantum computing, what kind of problems you enjoy, and how you like to work. It can be personal. Visitors read this page to understand the person behind the research.
 
-You can use **bold**, *italic*, [links](https://example.org), lists and even inline mathematics such as $\lvert\psi\rangle = \alpha\lvert 0\rangle + \beta\lvert 1\rangle$.
+You can use **bold**, *italic*, [links](https://example.org), lists and even inline mathematics such as $$.

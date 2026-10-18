@@ -13,7 +13,23 @@ const isActive = (href: string) => (href === '/' ? current === '/' : current ===
 
 <header class="wrap">
   <div class="flex h-16 items-center justify-between gap-6 md:h-[72px]">
-    <a href={url('/')} class="quiet text-[0.9375rem] font-medium tracking-[-0.01em] whitespace-nowrap">{name}</a>
+    <a
+      href={url('/')}
+      aria-label={name}
+      title={name}
+      class="group inline-flex items-center focus-visible:outline-none"
+    >
+      <span class="inline-flex h-10 w-10 md:h-11 md:w-11 items-center justify-center overflow-hidden rounded-full border border-rule bg-white shadow-2xs transition-all duration-300 group-hover:border-ink/40 group-hover:scale-[1.04]">
+        <img
+          src={url('/images/profile/avatar-logo.png')}
+          alt={name}
+          width="44"
+          height="44"
+          decoding="async"
+          class="h-full w-full object-cover"
+        />
+      </span>
+    </a>
 
     <nav aria-label="Main" class="hidden md:block">
       <ul class="flex items-center gap-7 text-[0.875rem]">

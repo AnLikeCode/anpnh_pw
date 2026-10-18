@@ -5,17 +5,17 @@ import ResearchRow from '../components/research/ResearchRow.astro';
 import JourneyItem from '../components/journey/JourneyItem.astro';
 import ArticleRow from '../components/insights/ArticleRow.astro';
 import { getMemoryPhotos } from '../lib/memories';
-import PersonCard from '../components/people/PersonCard.astro';
-import GroupCard from '../components/people/GroupCard.astro';
-import { getProfile, getPeople, getGroups, published, pickFeatured, url } from '../lib/site';
+import { getCertificates } from '../lib/certificates';
+import { getProfile, published, pickFeatured, url } from '../lib/site';
 import { siteConfig } from '../site.config';
-import { render } from 'astro:content';
 
 const profile = await getProfile();
 const p = profile.data;
 
 const allResearch = await published('research');
 const featuredResearch = pickFeatured(allResearch, siteConfig.home.research);
+
+const certificates = getCertificates();
 
 const allJourney = await published('journey');
 const recentJourney = allJourney.slice(0, siteConfig.home.journey);
@@ -25,9 +25,6 @@ const featuredInsights = pickFeatured(allInsights, siteConfig.home.insights);
 
 const allMemories = getMemoryPhotos();
 const previewMemories = allMemories.slice(0, siteConfig.home.memories);
-
-const people = await getPeople();
-const groups = await getGroups();
 ---
 
 <Base>
@@ -100,6 +97,44 @@ const groups = await getGroups();
     </div>
   </section>
 
+  <!-- Certifications -->
+  {certificates.length > 0 && (
+    <section class="wrap py-16 md:py-24 border-b border-rule">
+      <div class="flex flex-col gap-2 md:flex-row md:items-baseline md:justify-between mb-10">
+        <div>
+          <h2 class="h-section">Certifications</h2>
+          <p class="mt-1 text-[0.875rem] text-ink-3 font-serif italic">
+            Verified credentials in quantum information, machine learning, and error correction.
+          </p>
+        </div>
+        <span class="meta text-ink-3 font-mono text-xs">{certificates.length} credentials</span>
+      </div>
+
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {certificates.map((cert, index) => (
+          <figure class="group">
+            <div
+              class="cert-trigger cursor-zoom-in overflow-hidden rounded-[2px] border border-rule bg-paper-2 p-2.5 shadow-xs transition-all duration-300 group-hover:border-ink/30"
+              data-cert-src={url(cert.src)}
+              data-cert-alt={cert.alt}
+              data-cert-index={index}
+            >
+              <div class="overflow-hidden rounded-[1px] bg-white aspect-[4/3] flex items-center justify-center">
+                <img
+                  src={url(cert.src)}
+                  alt={cert.alt}
+                  loading="lazy"
+                  decoding="async"
+                  class="w-full h-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+                />
+              </div>
+            </div>
+          </figure>
+        ))}
+      </div>
+    </section>
+  )}
+
   <!-- Recent journey & news -->
   <section class="wrap py-16 md:py-24 border-b border-rule">
     <div class="flex flex-col gap-2 md:flex-row md:items-baseline md:justify-between mb-8">
@@ -116,35 +151,6 @@ const groups = await getGroups();
       ))}
     </div>
   </section>
-
-  <!-- Supervisors & Research Group -->
-  {(people.length > 0 || groups.length > 0) && (
-    <section class="wrap py-16 md:py-24 border-b border-rule">
-      <div class="mb-10">
-        <h2 class="h-section">Supervisors and laboratory</h2>
-      </div>
-
-      <div class="grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-16">
-        {people.map(async (person) => {
-          const { Content } = await render(person);
-          return (
-            <PersonCard person={person}>
-              <Content />
-            </PersonCard>
-          );
-        })}
-
-        {groups.map(async (group) => {
-          const { Content } = await render(group);
-          return (
-            <GroupCard group={group}>
-              <Content />
-            </GroupCard>
-          );
-        })}
-      </div>
-    </section>
-  )}
 
   <!-- Selected insights -->
   <section class="wrap py-16 md:py-24 border-b border-rule">
@@ -195,4 +201,123 @@ const groups = await getGroups();
       ))}
     </div>
   </section>
+
+  <!-- Certificate Lightbox Modal -->
+  <div
+    id="cert-lightbox"
+    class="fixed inset-0 z-50 hidden flex-col justify-between bg-ink/95 text-paper backdrop-blur-md transition-opacity duration-300 opacity-0"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Certificate Lightbox"
+  >
+    <div class="flex items-center justify-between px-6 py-4 border-b border-paper/10">
+      <div class="font-mono text-xs text-paper/70 tracking-widest">
+        <span id="cert-lb-counter">01 / 03</span>
+      </div>
+      <button
+        type="button"
+        id="cert-lb-close"
+        class="text-paper/70 hover:text-paper text-sm font-mono tracking-wider p-2 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+        aria-label="Close certificate view"
+      >
+        [CLOSE ESC]
+      </button>
+    </div>
+
+    <div class="relative flex-1 flex items-center justify-center p-4 sm:p-8 overflow-hidden select-none" id="cert-lb-stage">
+      <button
+        type="button"
+        id="cert-lb-prev"
+        class="absolute left-4 top-1/2 -translate-y-1/2 p-3 text-paper/50 hover:text-paper font-mono text-lg transition-colors z-10 focus-visible:outline-none"
+        aria-label="Previous certificate"
+      >
+        &larr;
+      </button>
+
+      <img
+        id="cert-lb-img"
+        src=""
+        alt=""
+        class="max-h-[85vh] max-w-[92vw] object-contain rounded-[2px] shadow-2xl transition-transform duration-300"
+      />
+
+      <button
+        type="button"
+        id="cert-lb-next"
+        class="absolute right-4 top-1/2 -translate-y-1/2 p-3 text-paper/50 hover:text-paper font-mono text-lg transition-colors z-10 focus-visible:outline-none"
+        aria-label="Next certificate"
+      >
+        &rarr;
+      </button>
+    </div>
+  </div>
 </Base>
+
+<script>
+  const lightbox = document.getElementById('cert-lightbox');
+  const lbImg = document.getElementById('cert-lb-img') as HTMLImageElement;
+  const lbCounter = document.getElementById('cert-lb-counter');
+  const lbClose = document.getElementById('cert-lb-close');
+  const lbPrev = document.getElementById('cert-lb-prev');
+  const lbNext = document.getElementById('cert-lb-next');
+  const lbStage = document.getElementById('cert-lb-stage');
+
+  const triggers = Array.from(document.querySelectorAll<HTMLElement>('.cert-trigger'));
+  let currentIndex = 0;
+
+  const items = triggers.map((el) => ({
+    src: el.dataset.certSrc || '',
+    alt: el.dataset.certAlt || '',
+  }));
+
+  function openCertLightbox(index: number) {
+    if (!lightbox || !lbImg || items.length === 0) return;
+    currentIndex = (index + items.length) % items.length;
+    const item = items[currentIndex]!;
+
+    lbImg.src = item.src;
+    lbImg.alt = item.alt;
+
+    if (lbCounter) {
+      const cur = String(currentIndex + 1).padStart(2, '0');
+      const total = String(items.length).padStart(2, '0');
+      lbCounter.textContent = `${cur} / ${total}`;
+    }
+
+    lightbox.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    requestAnimationFrame(() => {
+      lightbox.classList.remove('opacity-0');
+      lightbox.classList.add('opacity-100');
+    });
+  }
+
+  function closeCertLightbox() {
+    if (!lightbox) return;
+    lightbox.classList.remove('opacity-100');
+    lightbox.classList.add('opacity-0');
+    document.body.style.overflow = '';
+    setTimeout(() => {
+      lightbox.classList.add('hidden');
+    }, 300);
+  }
+
+  triggers.forEach((trigger, idx) => {
+    trigger.addEventListener('click', () => openCertLightbox(idx));
+  });
+
+  lbClose?.addEventListener('click', closeCertLightbox);
+  lbNext?.addEventListener('click', () => openCertLightbox(currentIndex + 1));
+  lbPrev?.addEventListener('click', () => openCertLightbox(currentIndex - 1));
+
+  lbStage?.addEventListener('click', (e) => {
+    if (e.target === lbStage) closeCertLightbox();
+  });
+
+  window.addEventListener('keydown', (e) => {
+    if (!lightbox || lightbox.classList.contains('hidden')) return;
+    if (e.key === 'Escape') closeCertLightbox();
+    if (e.key === 'ArrowRight') openCertLightbox(currentIndex + 1);
+    if (e.key === 'ArrowLeft') openCertLightbox(currentIndex - 1);
+  });
+</script>
