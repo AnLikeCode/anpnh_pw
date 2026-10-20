@@ -30,8 +30,12 @@ const isSelfAuthor = (name: string) => /\bAn\b/i.test(name);
         <span>{formatDate(d.date)}</span>
         <span class="text-rule-strong">/</span>
         <span>{kindLabel[d.kind] || d.kind}</span>
-        <span class="text-rule-strong">/</span>
-        <span class="capitalize">{statusLabel[d.status] || d.status}</span>
+        {(statusLabel[d.status] || d.status).toLowerCase() !== (kindLabel[d.kind] || d.kind).toLowerCase() && (
+          <>
+            <span class="text-rule-strong">/</span>
+            <span class="capitalize">{statusLabel[d.status] || d.status}</span>
+          </>
+        )}
         {d.venue && (
           <>
             <span class="text-rule-strong">/</span>

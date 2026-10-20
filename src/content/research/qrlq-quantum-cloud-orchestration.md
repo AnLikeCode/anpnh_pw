@@ -22,8 +22,6 @@ tags:
 links:
   - label: arXiv
     url: https://arxiv.org/abs/2609.27446
-  - label: PDF
-    url: https://arxiv.org/pdf/2609.27446
 featured: true
 draft: false
 sample: false
