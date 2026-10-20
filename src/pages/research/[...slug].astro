@@ -1,6 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { getCollection, render } from 'astro:content';
+import { getCollection } from 'astro:content';
 import { formatDate, kindLabel, statusLabel, url } from '../../lib/site';
 
 export async function getStaticPaths() {
@@ -13,7 +13,7 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const d = entry.data;
-const { Content } = await render(entry);
+const isSelfAuthor = (name: string) => /\bAn\b/i.test(name);
 ---
 
 <Base title={d.title} description={d.abstract || d.summary}>
@@ -46,20 +46,29 @@ const { Content } = await render(entry);
 
       {d.authors.length > 0 && (
         <p class="mt-4 text-[0.9375rem] text-ink-2">
-          <span class="text-ink-3">Authors:</span> {d.authors.join(', ')}
-        </p>
-      )}
-
-      {d.role && (
-        <p class="mt-1 text-[0.875rem] text-ink-3">
-          <span class="font-medium text-ink-2">Role:</span> {d.role}
+          <span class="text-ink-3">Authors:</span>{' '}
+          {d.authors.map((author, idx) => (
+            <>
+              {isSelfAuthor(author) ? (
+                <strong class="font-semibold text-ink">{author}</strong>
+              ) : (
+                <span>{author}</span>
+              )}
+              {idx < d.authors.length - 1 ? ', ' : ''}
+            </>
+          ))}
         </p>
       )}
 
       {d.links.length > 0 && (
         <div class="mt-6 flex flex-wrap gap-4 text-[0.875rem]">
           {d.links.map((link) => (
-            <a href={url(link.url)} class="link text-ink-2 hover:text-accent inline-flex items-center gap-1">
+            <a
+              href={url(link.url)}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="link text-ink-2 hover:text-accent inline-flex items-center gap-1"
+            >
               <span>{link.label}</span>
               <span class="arrow-ne">&nearr;</span>
             </a>
@@ -70,21 +79,10 @@ const { Content } = await render(entry);
 
     {d.abstract && (
       <section class="my-10 p-6 md:p-8 bg-paper-2 border border-rule rounded-[2px] max-w-[70ch]">
-        <h2 class="text-xs uppercase tracking-wider font-mono text-ink-3 mb-2">Abstract</h2>
+        <h2 class="text-xs uppercase tracking-wider font-mono text-ink-3 mb-3">Abstract</h2>
         <p class="font-serif text-base md:text-lg text-ink-2 leading-relaxed">
           {d.abstract}
         </p>
-      </section>
-    )}
-
-    <div class="prose mt-12 max-w-[68ch]">
-      <Content />
-    </div>
-
-    {d.bibtex && (
-      <section class="mt-16 border-t border-rule pt-10 max-w-[68ch]">
-        <h2 class="text-xs uppercase tracking-wider font-mono text-ink-3 mb-3">Citation (BibTeX)</h2>
-        <pre class="overflow-x-auto text-xs p-4 bg-paper-2 border border-rule rounded-[2px] text-ink-2 font-mono leading-relaxed"><code>{d.bibtex.trim()}</code></pre>
       </section>
     )}
   </article>

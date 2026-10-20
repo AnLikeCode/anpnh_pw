@@ -9,6 +9,7 @@ interface Props {
 const { entry } = Astro.props;
 const d = entry.data;
 const href = url(`/research/${entry.id}`);
+const isSelfAuthor = (name: string) => /\bAn\b/i.test(name);
 ---
 
 <article class="group border-b border-rule py-6 transition-colors duration-200">
@@ -26,6 +27,21 @@ const href = url(`/research/${entry.id}`);
     </div>
   </div>
 
+  {d.authors && d.authors.length > 0 && (
+    <p class="mt-1.5 text-[0.875rem] text-ink-2">
+      {d.authors.map((author, idx) => (
+        <>
+          {isSelfAuthor(author) ? (
+            <strong class="font-semibold text-ink">{author}</strong>
+          ) : (
+            <span>{author}</span>
+          )}
+          {idx < d.authors.length - 1 ? ', ' : ''}
+        </>
+      ))}
+    </p>
+  )}
+
   <p class="mt-2 text-[0.9375rem] text-ink-2 max-w-[65ch]">
     {d.summary}
   </p>
@@ -40,10 +56,22 @@ const href = url(`/research/${entry.id}`);
         <span>{d.venue}</span>
       </>
     )}
-    {d.role && (
+    {d.links && d.links.length > 0 && (
       <>
         <span class="text-rule-strong">/</span>
-        <span class="text-ink-3">{d.role}</span>
+        <span class="inline-flex items-center gap-3">
+          {d.links.map((link) => (
+            <a
+              href={url(link.url)}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="link text-ink-2 hover:text-accent inline-flex items-center gap-0.5"
+            >
+              <span>{link.label}</span>
+              <span class="arrow-ne">&nearr;</span>
+            </a>
+          ))}
+        </span>
       </>
     )}
   </div>

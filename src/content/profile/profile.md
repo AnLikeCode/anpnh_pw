@@ -14,13 +14,11 @@ affiliation: University of Information Technology # PLACEHOLDER (optional)
 identity: A Scientist or an Engineer?
 
 # Hero statement. Keep it under 20 words.
-statement: He has been an active research member of QuantumAI.Cloud Lab (QAC Lab) since early 2024. In September 2026, he joined the Viettel Institute of Strategic Technology and Industry as a Quantum Algorithm Engineer Intern. # PLACEHOLDER
+statement: I have been an active research member of QuantumAI.Cloud Lab (QAC Lab) since early 2024. In September 2026, I joined the Viettel Institute of Strategic Technology and Industry as a Quantum Algorithm Engineer Intern. # PLACEHOLDER
 
 # Homepage "About" summary, two to four sentences.
 summary: >-
-  This paragraph is a placeholder for a short summary of your academic background,
-  your research interests and your current focus. Write it in the first person and
-  keep it plain. A sentence about what motivates the work helps visitors understand you.
+  I major in Computer Networks and Data Communications, yet my research focuses on Quantum Computing. I am particularly interested in the intersection of quantum computing, machine learning, cloud computing, and distributed systems.
 
 # Optional. Shown on the About page.
 currentFocus: I actively explore practical applications of quantum algorithms, distributed quantum machine learning, and quantum error correction for reliable quantum computing. I am particularly interested in efficient resource management for quantum cloud computing.
