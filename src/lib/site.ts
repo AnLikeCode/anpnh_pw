@@ -138,6 +138,7 @@ export const kindLabel: Record<string, string> = {
 
 export const statusLabel: Record<string, string> = {
   published: 'Published',
+  accepted: 'Accepted',
   preprint: 'Preprint',
   'under-review': 'Under review',
   ongoing: 'Ongoing',

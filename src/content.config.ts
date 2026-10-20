@@ -127,7 +127,7 @@ export const researchKinds = [
   'software',
   'thesis',
 ] as const;
-export const researchStatuses = ['published', 'preprint', 'under-review', 'ongoing', 'completed'] as const;
+export const researchStatuses = ['published', 'accepted', 'preprint', 'under-review', 'ongoing', 'completed'] as const;
 
 const research = defineCollection({
   loader: md('research'),

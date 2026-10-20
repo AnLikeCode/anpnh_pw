@@ -26,20 +26,6 @@ const software = entries.filter((e) => e.data.kind === 'software' || e.data.kind
     </header>
 
     <div class="space-y-16">
-      {preprints.length > 0 && (
-        <section>
-          <div class="flex items-baseline justify-between border-b border-ink pb-2 mb-2">
-            <h2 class="text-xs uppercase tracking-wider font-mono text-ink-3">Preprints</h2>
-            <span class="meta text-ink-3">({preprints.length})</span>
-          </div>
-          <div>
-            {preprints.map((entry) => (
-              <ResearchRow entry={entry} />
-            ))}
-          </div>
-        </section>
-      )}
-
       {publications.length > 0 && (
         <section>
           <div class="flex items-baseline justify-between border-b border-ink pb-2 mb-2">
@@ -48,6 +34,20 @@ const software = entries.filter((e) => e.data.kind === 'software' || e.data.kind
           </div>
           <div>
             {publications.map((entry) => (
+              <ResearchRow entry={entry} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {preprints.length > 0 && (
+        <section>
+          <div class="flex items-baseline justify-between border-b border-ink pb-2 mb-2">
+            <h2 class="text-xs uppercase tracking-wider font-mono text-ink-3">Preprints</h2>
+            <span class="meta text-ink-3">({preprints.length})</span>
+          </div>
+          <div>
+            {preprints.map((entry) => (
               <ResearchRow entry={entry} />
             ))}
           </div>
