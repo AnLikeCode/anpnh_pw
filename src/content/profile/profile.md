@@ -62,6 +62,8 @@ news:
     text: "Released our preprint on Quantum Reinforcement Learning for Quantum Cloud Orchestration (QRLQ) on arXiv."
   - date: "Aug 2026"
     text: "Awarded the Qiskit Global Summer School 2026 Certificate of Quantum Excellence by IBM."
+  - date: "Jul 2026"
+    text: "Selected as a Finalist in SEA Quantathon 2026, applying quantum computing to create value for social development."
   - date: "Oct 2025"
     text: "Selected as a Finalist in the 2025 Global Industry Challenge with official recognition."
   - date: "Sep 2024"

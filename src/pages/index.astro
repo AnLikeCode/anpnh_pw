@@ -134,12 +134,16 @@ const previewMemories = allMemories.slice(0, siteConfig.home.memories);
   <!-- What's New -->
   {p.news && p.news.length > 0 && (
     <section class="wrap py-16 md:py-24 border-b border-rule">
-      <div class="mb-8">
+      <div class="flex flex-col gap-2 md:flex-row md:items-baseline md:justify-between mb-8">
         <h2 class="h-section">What's New</h2>
+        <a href={url('/about#whats-new')} class="meta link text-ink-3 hover:text-accent inline-flex items-center gap-1">
+          <span>All updates ({p.news.length})</span>
+          <span class="arrow">&rarr;</span>
+        </a>
       </div>
 
       <ul class="divide-y divide-rule border-t border-b border-rule">
-        {p.news.map((item) => (
+        {p.news.slice(0, siteConfig.home.news).map((item) => (
           <li class="py-4 flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-6">
             <span class="meta font-mono text-xs text-ink-3 shrink-0 sm:w-24">{item.date}</span>
             <p class="text-[0.9375rem] text-ink-2 leading-relaxed">{item.text}</p>

@@ -123,5 +123,27 @@ const groups = await getGroups();
         </div>
       </section>
     )}
+
+    <!-- Full What's New Archive -->
+    {p.news && p.news.length > 0 && (
+      <section id="whats-new" class="mt-24 border-t border-rule pt-16">
+        <div class="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between mb-8">
+          <div>
+            <h2 class="text-2xl font-medium tracking-tight text-ink">What's New</h2>
+            <p class="mt-1 text-sm text-ink-3 font-serif italic">Complete timeline of academic updates, awards, and milestones.</p>
+          </div>
+          <span class="meta font-mono text-xs text-ink-3">{p.news.length} updates</span>
+        </div>
+
+        <ul class="divide-y divide-rule border-t border-b border-rule">
+          {p.news.map((item) => (
+            <li class="py-4 flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-6">
+              <span class="meta font-mono text-xs text-ink-3 shrink-0 sm:w-24">{item.date}</span>
+              <p class="text-[0.9375rem] text-ink-2 leading-relaxed">{item.text}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
   </div>
 </Base>

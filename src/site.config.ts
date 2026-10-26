@@ -25,6 +25,7 @@ export const siteConfig = {
   /** How many items to show in each homepage section. */
   home: {
     research: 3,
+    news: 10,
     insights: 3,
     memories: 3,
   },
