@@ -60,10 +60,16 @@ news:
     text: "Our paper on Quantum Machine Learning for Windows PE Malware Detection has been accepted at NSS-SocialSec 2026."
   - date: "Sep 2026"
     text: "Released our preprint on Quantum Reinforcement Learning for Quantum Cloud Orchestration (QRLQ) on arXiv."
-  - date: "Sep 2026"
-    text: "Joined the Viettel Institute of Strategic Technology and Industry as a Quantum Algorithm Engineer Intern."
   - date: "Aug 2026"
     text: "Awarded the Qiskit Global Summer School 2026 Certificate of Quantum Excellence by IBM."
+  - date: "Oct 2025"
+    text: "Selected as a Finalist in the 2025 Global Industry Challenge with official recognition."
+  - date: "Sep 2024"
+    text: "Joined QuantumAI.Cloud Lab as a Research Intern, focusing on quantum algorithms and their applications."
+  - date: "Aug 2024"
+    text: "Joined Scholar Community to support the academic community in quantum computing and emerging technologies."
+  - date: "Jul 2024"
+    text: "Joined the IoT & Networking Lab as an Academic Assistant."
 
 # A small closing line shown in the footer of every page.
 footerLine: Quantum is not just science fiction.
