@@ -70,6 +70,14 @@ const profile = defineCollection({
         }),
       )
       .default([]),
+    news: z
+      .array(
+        z.object({
+          date: text('date'),
+          text: text('text'),
+        }),
+      )
+      .default([]),
     footerLine: z.string().optional(),
   }),
 });
@@ -155,20 +163,6 @@ const research = defineCollection({
   }),
 });
 
-const journey = defineCollection({
-  loader: md('journey'),
-  schema: z.object({
-    title: text('title'),
-    date: date('date'),
-    category: text('category'),
-    description: text('description'),
-    cover: photo.optional(),
-    gallery: z.array(photo).default([]),
-    links: z.array(link).default([]),
-    ...common,
-  }),
-});
-
 const insights = defineCollection({
   loader: md('insights'),
   schema: z.object({
@@ -200,4 +194,4 @@ const memories = defineCollection({
   }),
 });
 
-export const collections = { profile, people, group, pages, research, journey, insights, memories };
+export const collections = { profile, people, group, pages, research, insights, memories };

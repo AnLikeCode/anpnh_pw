@@ -2,7 +2,6 @@
 import Base from '../layouts/Base.astro';
 import QuantumSphere from '../components/visual/QuantumSphere.astro';
 import ResearchRow from '../components/research/ResearchRow.astro';
-import JourneyItem from '../components/journey/JourneyItem.astro';
 import ArticleRow from '../components/insights/ArticleRow.astro';
 import { getMemoryPhotos } from '../lib/memories';
 import { getCertificates } from '../lib/certificates';
@@ -16,9 +15,6 @@ const allResearch = await published('research');
 const featuredResearch = pickFeatured(allResearch, siteConfig.home.research);
 
 const certificates = getCertificates();
-
-const allJourney = await published('journey');
-const recentJourney = allJourney.slice(0, siteConfig.home.journey);
 
 const allInsights = await published('insights');
 const featuredInsights = pickFeatured(allInsights, siteConfig.home.insights);
@@ -135,22 +131,23 @@ const previewMemories = allMemories.slice(0, siteConfig.home.memories);
     </section>
   )}
 
-  <!-- Recent journey & news -->
-  <section class="wrap py-16 md:py-24 border-b border-rule">
-    <div class="flex flex-col gap-2 md:flex-row md:items-baseline md:justify-between mb-8">
-      <h2 class="h-section">Recent milestones</h2>
-      <a href={url('/journey')} class="meta link text-ink-3 hover:text-accent inline-flex items-center gap-1">
-        <span>Full journey archive</span>
-        <span class="arrow">&rarr;</span>
-      </a>
-    </div>
+  <!-- What's New -->
+  {p.news && p.news.length > 0 && (
+    <section class="wrap py-16 md:py-24 border-b border-rule">
+      <div class="mb-8">
+        <h2 class="h-section">What's New</h2>
+      </div>
 
-    <div>
-      {recentJourney.map((entry) => (
-        <JourneyItem entry={entry} />
-      ))}
-    </div>
-  </section>
+      <ul class="divide-y divide-rule border-t border-b border-rule">
+        {p.news.map((item) => (
+          <li class="py-4 flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-6">
+            <span class="meta font-mono text-xs text-ink-3 shrink-0 sm:w-24">{item.date}</span>
+            <p class="text-[0.9375rem] text-ink-2 leading-relaxed">{item.text}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
 
   <!-- Selected insights -->
   <section class="wrap py-16 md:py-24 border-b border-rule">

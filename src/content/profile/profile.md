@@ -54,6 +54,17 @@ education:
     years: Year - Year
     note: Optional thesis title or note
 
+# Homepage "What's New" announcements (add/edit lines freely).
+news:
+  - date: "Oct 2026"
+    text: "Our paper on Quantum Machine Learning for Windows PE Malware Detection has been accepted at NSS-SocialSec 2026."
+  - date: "Sep 2026"
+    text: "Released our preprint on Quantum Reinforcement Learning for Quantum Cloud Orchestration (QRLQ) on arXiv."
+  - date: "Sep 2026"
+    text: "Joined the Viettel Institute of Strategic Technology and Industry as a Quantum Algorithm Engineer Intern."
+  - date: "Aug 2026"
+    text: "Awarded the Qiskit Global Summer School 2026 Certificate of Quantum Excellence by IBM."
+
 # A small closing line shown in the footer of every page.
 footerLine: Quantum is not just science fiction.
 ---

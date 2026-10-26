@@ -42,7 +42,7 @@ export const year = (d: Date) => d.getUTCFullYear();
 /* Collections                                                         */
 /* ------------------------------------------------------------------ */
 
-type Dated = 'research' | 'journey' | 'insights' | 'memories';
+type Dated = 'research' | 'insights' | 'memories';
 
 /** Entries sorted newest first. Drafts are hidden in production builds. */
 export async function published<C extends Dated>(name: C): Promise<CollectionEntry<C>[]> {
