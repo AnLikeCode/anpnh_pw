@@ -35,11 +35,13 @@ const d = group.data;
   </div>
 
   {d.directions.length > 0 && (
-    <div class="meta mt-4 flex flex-wrap gap-x-3 gap-y-1 text-ink-3">
-      <span class="text-ink-2 font-medium">Research directions:</span>
-      {d.directions.map((dir) => (
-        <span>{dir}</span>
-      ))}
+    <div class="meta mt-4 text-ink-3">
+      <span class="text-ink-2 font-medium block mb-1.5">Research directions:</span>
+      <ul class="space-y-1">
+        {d.directions.map((dir) => (
+          <li>{dir}</li>
+        ))}
+      </ul>
     </div>
   )}
 

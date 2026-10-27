@@ -42,11 +42,9 @@ const d = person.data;
   </div>
 
   {d.interests.length > 0 && (
-    <div class="meta mt-4 flex flex-wrap gap-x-3 gap-y-1 text-ink-3">
-      <span class="text-ink-2 font-medium">Interests:</span>
-      {d.interests.map((interest) => (
-        <span>{interest}</span>
-      ))}
+    <div class="meta mt-4 text-ink-3">
+      <span class="text-ink-2 font-medium">Interests:</span>{' '}
+      <span>{d.interests.join(', ')}</span>
     </div>
   )}
 
