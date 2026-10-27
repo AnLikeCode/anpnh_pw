@@ -1,17 +1,15 @@
 ---
-# =====================================================================
-# SECOND SUPERVISOR (PLACEHOLDER)
-# =====================================================================
-name: Dang Van Huynh # PLACEHOLDER
-title: Academic title # PLACEHOLDER
+name: Dr. Dang Van Huynh
+title: Lecturer & Co-lead, UiTiOt Research Group
 relation: Co-supervisor
 order: 2
-affiliation: Department, University # PLACEHOLDER
-website: https://example.org # PLACEHOLDER
+affiliation: University of Information Technology, VNU-HCM
+website: https://sites.google.com/site/vdanghuynh/
 interests:
-  - Research interest one # PLACEHOLDER
-  - Research interest two
-sample: true
+  - Quantum Optimization & Cybersecurity
+  - Digital Twins & Edge AI
+  - Next-Generation Wireless (6G)
+sample: false
 ---
 
-Placeholder introduction for your second supervisor. Keep it short and respectful; a link to their own page carries the details.
+Dr. Dang Van Huynh is a Lecturer at VNUHCM-UIT and an Associate Editor of Quantum Machine Intelligence, specializing in intelligent optimization for distributed networks, edge intelligence, and quantum computing.

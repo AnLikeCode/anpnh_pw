@@ -1,23 +1,12 @@
 ---
-# =====================================================================
-# RESEARCH GROUP (PLACEHOLDER)
-# You can add more files in this folder if you belong to several groups.
-# =====================================================================
-name: QuantumAI.Cloud Lab # PLACEHOLDER
-institution: Research Group  # PLACEHOLDER
-website: https://quantumai.cloud/ # PLACEHOLDER
+name: QuantumAI.Cloud (QAC) Lab
+institution: Research & Development Initiative
+website: https://quantumai.cloud/
 directions:
-  - Quantum Cloud & Distributed Computing # PLACEHOLDER
+  - Quantum Cloud & Distributed Computing
   - Reliable AI for Quantum Software & Systems
   - Quantum Machine Learning & Optimisation Applications
-# Optional logo or group photograph (files in public/images/people/):
-# logo:
-#   src: /images/people/group-logo.svg
-#   alt: Research Group Name logo
-# photo:
-#   src: /images/people/group-photo.jpg
-#   alt: Members of the research group
-sample: true
+sample: false
 ---
 
-Placeholder description of the research group or laboratory: what it studies, how it is organised, and where your own work fits. Two short paragraphs are usually enough.
+QuantumAI.Cloud (QAC) Lab advances the convergence of quantum computing, artificial intelligence, and cloud systems through three core pillars: heterogeneous quantum-classical resource orchestration, reliable AI-assisted quantum software engineering, and practical quantum machine learning and optimisation applications.

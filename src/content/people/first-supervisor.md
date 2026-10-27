@@ -1,24 +1,15 @@
 ---
-# =====================================================================
-# FIRST SUPERVISOR (PLACEHOLDER)
-# Shown on the homepage and on the About page. "order" controls position.
-# The text after the second "---" is a short introduction.
-# =====================================================================
-name: Hoa Thanh Nguyen # PLACEHOLDER
-title: Academic title # PLACEHOLDER: e.g. "Professor of Theoretical Physics"
+name: Dr. Hoa T. Nguyen
+title: Research Scientist, Quantum Systems Team
 relation: Principal supervisor
 order: 1
-affiliation: Department, University # PLACEHOLDER
-website: https://example.org # PLACEHOLDER
+affiliation: CSIRO, Australia & QuantumAI.Cloud Lab
+website: https://hoaio.com/
 interests:
-  - Research interest one # PLACEHOLDER
-  - Research interest two
-  - Research interest three
-# Optional portrait. Put the file in public/images/people/ and uncomment.
-# portrait:
-#   src: /images/people/first-supervisor.jpg
-#   alt: Portrait of First Supervisor Name
-sample: true
+  - Quantum Software Engineering
+  - Quantum Cloud Computing
+  - Quantum Machine Learning
+sample: false
 ---
 
-Placeholder introduction. Two or three sentences describing your supervisor's research and, if you like, what you have learned working with them.
+Dr. Hoa Nguyen is a Research Scientist at CSIRO and leads QuantumAI.Cloud Lab, focusing on quantum software engineering, quantum cloud resource orchestration, and AI-driven distributed quantum systems.
