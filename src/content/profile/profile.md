@@ -49,10 +49,6 @@ education:
   - degree: Bachelor of Computer Networks and Data Communications
     institution: University of Information Technology, Vietnam National University Ho Chi Minh City
     years: 2023 - 2027
-  - degree: Previous degree # PLACEHOLDER
-    institution: Institution name
-    years: Year - Year
-    note: Optional thesis title or note
 
 # Homepage "What's New" announcements (add/edit lines freely).
 news:
@@ -77,8 +73,11 @@ news:
 footerLine: Quantum is not just science fiction.
 ---
 
-This is placeholder biography text. Replace it with your own story, written in Markdown.
+Through the IBM Quantum Information curriculum, I built a solid foundation in quantum information science despite majoring in Computer Networks and Data Communications.
 
-A good biography usually covers where you studied, how you arrived at quantum computing, what kind of problems you enjoy, and how you like to work. It can be personal. Visitors read this page to understand the person behind the research.
+Along my journey, I often wondered whether I should become a scientist or an engineer. Yet both paths carry their own distinct strengths. Why not exist in a state where the best of both worlds are placed into a quantum superposition? That is the principle that shaped who I am today:
 
-You can use **bold**, *italic*, [links](https://example.org), lists and even inline mathematics such as $$.
+$$
+|\text{AN}\rangle = \frac{1}{\sqrt{2}} \Big( |\text{Engineer}\rangle + |\text{Scientist}\rangle \Big)
+$$
+
