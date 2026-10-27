@@ -96,17 +96,40 @@ const previewMemories = allMemories.slice(0, siteConfig.home.memories);
   <!-- Certifications -->
   {certificates.length > 0 && (
     <section class="wrap py-16 md:py-24 border-b border-rule">
-      <div class="flex flex-col gap-2 md:flex-row md:items-baseline md:justify-between mb-8">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between mb-8">
         <div>
           <h2 class="h-section">Certifications</h2>
           <p class="mt-1 text-[0.875rem] text-ink-3 font-serif italic">
             Selected credentials and awards in quantum computing.
           </p>
         </div>
-        <span class="meta text-ink-3 font-mono text-xs">{certificates.length} credentials</span>
+        <div class="flex items-center gap-3">
+          <span class="meta text-ink-3 font-mono text-xs">{certificates.length} credentials</span>
+          <div class="inline-flex items-center gap-1" role="group" aria-label="Scroll certificates">
+            <button
+              type="button"
+              id="cert-scroll-prev"
+              class="inline-flex h-8 w-8 items-center justify-center rounded-[2px] border border-rule bg-paper-2 font-mono text-xs text-ink-2 transition-colors hover:border-ink/40 hover:text-ink disabled:opacity-30 disabled:pointer-events-none"
+              aria-label="Scroll certificates left"
+            >
+              &larr;
+            </button>
+            <button
+              type="button"
+              id="cert-scroll-next"
+              class="inline-flex h-8 w-8 items-center justify-center rounded-[2px] border border-rule bg-paper-2 font-mono text-xs text-ink-2 transition-colors hover:border-ink/40 hover:text-ink disabled:opacity-30 disabled:pointer-events-none"
+              aria-label="Scroll certificates right"
+            >
+              &rarr;
+            </button>
+          </div>
+        </div>
       </div>
 
-      <div class="flex flex-wrap items-center gap-4 sm:gap-5">
+      <div
+        id="cert-scroll-track"
+        class="flex items-center gap-4 sm:gap-5 overflow-x-auto scroll-smooth py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
         {certificates.map((cert, index) => (
           <figure class="group shrink-0">
             <div
@@ -255,6 +278,32 @@ const previewMemories = allMemories.slice(0, siteConfig.home.memories);
 </Base>
 
 <script>
+  // 1. Horizontal scroll shelf for Certifications
+  const certTrack = document.getElementById('cert-scroll-track');
+  const certScrollPrev = document.getElementById('cert-scroll-prev') as HTMLButtonElement | null;
+  const certScrollNext = document.getElementById('cert-scroll-next') as HTMLButtonElement | null;
+
+  function updateCertScrollButtons() {
+    if (!certTrack) return;
+    const maxScroll = certTrack.scrollWidth - certTrack.clientWidth;
+    if (certScrollPrev) certScrollPrev.disabled = certTrack.scrollLeft <= 2;
+    if (certScrollNext) certScrollNext.disabled = certTrack.scrollLeft >= maxScroll - 2;
+  }
+
+  certScrollPrev?.addEventListener('click', () => {
+    certTrack?.scrollBy({ left: -Math.max(260, certTrack.clientWidth * 0.6), behavior: 'smooth' });
+  });
+
+  certScrollNext?.addEventListener('click', () => {
+    certTrack?.scrollBy({ left: Math.max(260, certTrack.clientWidth * 0.6), behavior: 'smooth' });
+  });
+
+  certTrack?.addEventListener('scroll', updateCertScrollButtons, { passive: true });
+  window.addEventListener('resize', updateCertScrollButtons);
+  window.addEventListener('load', updateCertScrollButtons);
+  updateCertScrollButtons();
+
+  // 2. Fullscreen Lightbox for Certifications
   const lightbox = document.getElementById('cert-lightbox');
   const lbImg = document.getElementById('cert-lb-img') as HTMLImageElement;
   const lbCounter = document.getElementById('cert-lb-counter');
