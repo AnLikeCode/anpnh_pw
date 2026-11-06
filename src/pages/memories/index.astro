@@ -74,43 +74,113 @@ const photos = getMemoryPhotos();
       }
     </div>
 
-    <!-- 2. CURATED ARTISTIC FLOW (Alternative View) -->
-    <div id="view-curated-container" class="hidden space-y-16 md:space-y-24">
-      {
-        photos.map((item, index) => {
-          const isLarge = index === 0 || index === 4;
-          const isOffsetRight = index === 2 || index === 6;
+    <!-- 2. CURATED ARTISTIC FLOW (Minimalist Connected Gallery Wire) -->
+    <div id="view-curated-container" class="hidden relative pt-4 pb-10 px-4 sm:px-6 md:px-8">
+      <!-- Continuous Minimalist SVG Wire -->
+      <svg
+        id="curated-wire-svg"
+        class="pointer-events-none absolute inset-0 w-full h-full z-10 overflow-visible"
+        aria-hidden="true"
+      >
+        <!-- Subtle architectural connector rail between rows -->
+        <path
+          id="curated-rail-path"
+          d=""
+          fill="none"
+          stroke="var(--color-rule-strong)"
+          stroke-width="1"
+          stroke-dasharray="3 3"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+        <!-- Main taut catenary wire across photo anchors -->
+        <path
+          id="curated-wire-path"
+          d=""
+          fill="none"
+          stroke="var(--color-rule-strong)"
+          stroke-width="1.15"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
 
-          return (
-            <figure
-              class:list={[
-                'photo-frame group transition-opacity duration-300',
-                isLarge && 'max-w-4xl mx-auto',
-                isOffsetRight && 'max-w-2xl md:ml-auto md:mr-6',
-                !isLarge && !isOffsetRight && 'max-w-2xl mx-auto',
-              ]}
-              data-index={index}
-            >
-              <div
-                class="photo-trigger cursor-zoom-in overflow-hidden rounded-[2px] border border-rule bg-paper-2 p-2.5 md:p-3 shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.25)] transition-all duration-500 group-hover:border-ink/30"
-                data-photo-src={url(item.src)}
-                data-photo-alt={item.alt}
-                data-photo-index={index}
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 md:gap-x-10 gap-y-12 md:gap-y-14 items-start">
+        {
+          photos.map((item, index) => {
+            // Subtle, refined drop lengths (px) & barely-there natural tilt (deg)
+            const cordHeights = [28, 38, 32, 36, 26, 40];
+            const tilts = [-0.55, 0.45, -0.35, 0.5, -0.4, 0.4];
+            const cordH = cordHeights[index % cordHeights.length];
+            const tilt = tilts[index % tilts.length];
+
+            return (
+              <figure
+                class="hanging-slot relative flex flex-col items-center group select-none"
+                data-index={index}
+                style={`--resting-tilt: ${tilt}deg;`}
               >
-                <div class="overflow-hidden rounded-[1px] bg-paper">
-                  <img
-                    src={url(item.src)}
-                    alt={item.alt}
-                    loading={index < 2 ? 'eager' : 'lazy'}
-                    decoding="async"
-                    class="w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.012]"
+                {/* Top wire anchor dot */}
+                <div
+                  class="wire-anchor relative z-20 w-[6px] h-[6px] rounded-full bg-ink-3/80 ring-[2px] ring-paper transition-colors duration-300 group-hover:bg-accent"
+                  aria-hidden="true"
+                />
+
+                {/* Suspended Print Assembly */}
+                <div class="hanging-unit flex flex-col items-center max-w-full">
+                  {/* Fine vertical thread */}
+                  <div
+                    class="w-px bg-rule-strong transition-colors duration-300 group-hover:bg-accent/80"
+                    style={`height: ${cordH}px;`}
+                    aria-hidden="true"
                   />
+
+                  {/* Minimalist gallery clip tab */}
+                  <div
+                    class="relative z-10 -mb-px text-rule-strong group-hover:text-ink/30 transition-colors duration-300"
+                    aria-hidden="true"
+                  >
+                    <svg width="22" height="10" viewBox="0 0 22 10" fill="none" class="block">
+                      <path
+                        d="M 2,10 L 3.8,2.8 C 4.2,1.4 5.4,0.6 7,0.6 L 15,0.6 C 16.6,0.6 17.8,1.4 18.2,2.8 L 20,10 Z"
+                        fill="var(--color-paper-2)"
+                        stroke="currentColor"
+                        stroke-width="1"
+                      />
+                      <circle
+                        cx="11"
+                        cy="4.8"
+                        r="1.6"
+                        fill="var(--color-paper)"
+                        stroke="currentColor"
+                        stroke-width="0.9"
+                      />
+                    </svg>
+                  </div>
+
+                  {/* Framed Print: wraps natural aspect ratio with balanced visual height */}
+                  <div
+                    class="photo-trigger inline-block max-w-full cursor-zoom-in overflow-hidden rounded-[3px] border border-rule bg-paper-2 p-2 shadow-xs transition-all duration-300 group-hover:border-ink/30"
+                    data-photo-src={url(item.src)}
+                    data-photo-alt={item.alt}
+                    data-photo-index={index}
+                  >
+                    <div class="overflow-hidden rounded-[1px] bg-paper">
+                      <img
+                        src={url(item.src)}
+                        alt={item.alt}
+                        loading={index < 4 ? 'eager' : 'lazy'}
+                        decoding="async"
+                        class="curated-photo-img w-auto h-auto max-h-[230px] sm:max-h-[240px] md:max-h-[250px] max-w-full block mx-auto transition-transform duration-500 ease-out group-hover:scale-[1.015]"
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </figure>
-          );
-        })
-      }
+              </figure>
+            );
+          })
+        }
+      </div>
     </div>
   </div>
 
@@ -168,11 +238,95 @@ const photos = getMemoryPhotos();
 </Base>
 
 <script>
-  // 1. View Mode Switcher (Masonry Wall vs Curated Flow)
+  // 1. View Mode Switcher & Continuous Wire Renderer
   const btnCurated = document.getElementById('btn-curated');
   const btnMasonry = document.getElementById('btn-masonry');
   const containerCurated = document.getElementById('view-curated-container');
   const containerMasonry = document.getElementById('view-masonry-container');
+  const wirePath = document.getElementById('curated-wire-path');
+  const railPath = document.getElementById('curated-rail-path');
+
+  function updateCuratedWire() {
+    if (!containerCurated || !wirePath || containerCurated.classList.contains('hidden')) return;
+
+    const cRect = containerCurated.getBoundingClientRect();
+    if (cRect.width === 0) return;
+
+    const anchors = Array.from(containerCurated.querySelectorAll<HTMLElement>('.wire-anchor'));
+    if (anchors.length === 0) return;
+
+    const points = anchors.map((el) => {
+      const r = el.getBoundingClientRect();
+      return {
+        x: r.left - cRect.left + r.width / 2,
+        y: r.top - cRect.top + r.height / 2,
+      };
+    });
+
+    // Group anchor points into horizontal rows based on Y proximity
+    const rows: { x: number; y: number }[][] = [];
+    for (const pt of points) {
+      const lastRow = rows[rows.length - 1];
+      if (!lastRow || Math.abs(pt.y - lastRow[0]!.y) > 28) {
+        rows.push([pt]);
+      } else {
+        lastRow.push(pt);
+      }
+    }
+
+    rows.forEach((row) => row.sort((a, b) => a.x - b.x));
+
+    const leftRail = 4;
+    const rightRail = Math.max(cRect.width - 4, leftRail + 20);
+
+    let mainD = '';
+    let railD = '';
+
+    for (let r = 0; r < rows.length; r++) {
+      const row = rows[r]!;
+      const ordered = r % 2 === 0 ? row : [...row].reverse();
+      const firstInRow = ordered[0]!;
+
+      if (r === 0) {
+        mainD += `M ${firstInRow.x.toFixed(1)},${firstInRow.y.toFixed(1)}`;
+      } else {
+        mainD += ` M ${firstInRow.x.toFixed(1)},${firstInRow.y.toFixed(1)}`;
+      }
+
+      // Taut, subtle catenary wire across anchors in the same row (matching reference image)
+      for (let i = 0; i < ordered.length - 1; i++) {
+        const a = ordered[i]!;
+        const b = ordered[i + 1]!;
+        const mx = (a.x + b.x) / 2;
+        const my = (a.y + b.y) / 2 + 5.5;
+        mainD += ` Q ${mx.toFixed(1)},${my.toFixed(1)} ${b.x.toFixed(1)},${b.y.toFixed(1)}`;
+      }
+
+      // Clean architectural rail linking the end of row r to the start of row r + 1
+      if (r < rows.length - 1) {
+        const endOfRow = ordered[ordered.length - 1]!;
+        const nextRow = rows[r + 1]!;
+        const nextOrdered = (r + 1) % 2 === 0 ? nextRow : [...nextRow].reverse();
+        const startOfNext = nextOrdered[0]!;
+        const onRightSide = r % 2 === 0;
+        const railX = onRightSide ? rightRail : leftRail;
+        const rad = 8;
+        const dirX = onRightSide ? -1 : 1;
+
+        railD += ` M ${endOfRow.x.toFixed(1)},${endOfRow.y.toFixed(1)}`;
+        railD += ` L ${(railX + dirX * rad).toFixed(1)},${endOfRow.y.toFixed(1)}`;
+        railD += ` Q ${railX.toFixed(1)},${endOfRow.y.toFixed(1)} ${railX.toFixed(1)},${(endOfRow.y + rad).toFixed(1)}`;
+        railD += ` L ${railX.toFixed(1)},${(startOfNext.y - rad).toFixed(1)}`;
+        railD += ` Q ${railX.toFixed(1)},${startOfNext.y.toFixed(1)} ${(railX + dirX * rad).toFixed(1)},${startOfNext.y.toFixed(1)}`;
+        railD += ` L ${startOfNext.x.toFixed(1)},${startOfNext.y.toFixed(1)}`;
+      }
+    }
+
+    wirePath.setAttribute('d', mainD);
+    if (railPath) {
+      railPath.setAttribute('d', railD);
+    }
+  }
 
   function setView(mode: 'curated' | 'masonry') {
     if (mode === 'curated') {
@@ -182,6 +336,7 @@ const photos = getMemoryPhotos();
       btnCurated?.classList.remove('text-ink-3');
       btnMasonry?.classList.remove('bg-paper', 'text-ink', 'font-medium', 'shadow-xs');
       btnMasonry?.classList.add('text-ink-3');
+      requestAnimationFrame(() => updateCuratedWire());
     } else {
       containerCurated?.classList.add('hidden');
       containerMasonry?.classList.remove('hidden');
@@ -194,6 +349,20 @@ const photos = getMemoryPhotos();
 
   btnCurated?.addEventListener('click', () => setView('curated'));
   btnMasonry?.addEventListener('click', () => setView('masonry'));
+
+  if (containerCurated) {
+    const ro = new ResizeObserver(() => {
+      requestAnimationFrame(() => updateCuratedWire());
+    });
+    ro.observe(containerCurated);
+
+    containerCurated.querySelectorAll<HTMLImageElement>('img.curated-photo-img').forEach((img) => {
+      if (!img.complete) {
+        img.addEventListener('load', () => requestAnimationFrame(() => updateCuratedWire()), { once: true });
+      }
+    });
+  }
+  window.addEventListener('resize', () => requestAnimationFrame(() => updateCuratedWire()));
 
   // 2. Fullscreen Lightbox logic
   const lightbox = document.getElementById('lightbox');
@@ -288,3 +457,28 @@ const photos = getMemoryPhotos();
     if (e.key === 'ArrowLeft') prevPhoto();
   });
 </script>
+
+<style>
+  .hanging-slot {
+    perspective: 900px;
+  }
+
+  .hanging-unit {
+    transform-origin: 50% -3px;
+    transform: rotateZ(var(--resting-tilt, 0deg));
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+  }
+
+  .hanging-slot:hover .hanging-unit {
+    transform: rotateZ(0deg) rotateX(2.5deg) translateY(-1px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hanging-unit,
+    .hanging-slot:hover .hanging-unit {
+      transform: none;
+      transition: none;
+    }
+  }
+</style>
