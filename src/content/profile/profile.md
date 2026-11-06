@@ -52,6 +52,8 @@ education:
 
 # Homepage "What's New" announcements (add/edit lines freely).
 news:
+  - date: "Nov 2026"
+    text: "Presented our paper on Quantum Machine Learning for Windows PE Malware Detection at NSS-SocialSec 2026 in Hangzhou, China."
   - date: "Oct 2026"
     text: "Our paper on Quantum Machine Learning for Windows PE Malware Detection has been accepted at NSS-SocialSec 2026."
   - date: "Sep 2026"
